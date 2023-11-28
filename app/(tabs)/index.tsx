@@ -1,31 +1,83 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+import {Button, YStack, Text, ScrollView} from "tamagui";
+import {Ionicons} from '@expo/vector-icons';
+import {GenericPreviewList} from "../../components/recipes";
+import {useRouter} from "expo-router";
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+const sampleData = [
+    {
+        id: '1',
+        title: 'Sample title',
+    },
+    {
+        id: '2',
+        title: 'Sample title 2',
+    },
+    {
+        id: '3',
+        title: 'Sample title 3',
+    },
+    {
+        id: '4',
+        title: 'Sample title 4',
+    },
 
-export default function TabOneScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
-  );
+]
+
+export default function MyRecipesScreen() {
+
+    const router = useRouter();
+
+    return (
+        <YStack style={styles.container}>
+
+            <ScrollView f={1} w='100%' showsVerticalScrollIndicator={false}>
+                <YStack py={10}>
+                    <GenericPreviewList
+                        title='Breakfast'
+                        category='breakfasts'
+                        previewData={sampleData}
+                        amount={20}
+                    />
+                    <GenericPreviewList
+                        title='Lunch'
+                        category='breakfasts'
+                        previewData={[]}
+                        amount={0}
+                    />
+                    <GenericPreviewList
+                        title='Dinner'
+                        category='breakfasts'
+                        previewData={sampleData.slice(0, 1)}
+                        amount={20}
+                    />
+                    <GenericPreviewList
+                        title='Dessert'
+                        category='breakfasts'
+                        previewData={sampleData.slice(0, 2)}
+                        amount={20}
+                    />
+                </YStack>
+                <YStack height={50} />
+
+            </ScrollView>
+            <Button onPress={() => router.push('/(recipe)/add-recipe')} backgroundColor='$background' icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
+                Add recipe
+            </Button>
+        </YStack>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff'
+    },
+    fab: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20
+    }
 });
