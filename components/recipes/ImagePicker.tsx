@@ -1,7 +1,8 @@
 import {View} from "react-native";
-import {Button, Image, Text} from "tamagui";
+import {Button, Image, Text, YStack} from "tamagui";
 import * as Picker from 'expo-image-picker';
 import {useState} from "react";
+import * as React from 'react';
 
 export function ImagePicker() {
     const [image, setImage] = useState<any>(null);
@@ -23,9 +24,9 @@ export function ImagePicker() {
     };
 
     return (
-        <View>
-            <Button onPress={pickImage}>Pick an image from camera roll</Button>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-        </View>
+        <YStack>
+            {image && <Image source={{ uri: image }} style={{ width: '100%', height: 250 }} />}
+            <Button height={image ? 40 : 250} onPress={pickImage}>Select a picture</Button>
+        </YStack>
     )
 }

@@ -4,6 +4,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {Dimensions, TouchableOpacity, View} from "react-native";
 import {useRouter} from "expo-router";
 
+
 interface Props {
     title: string;
     category: string;
@@ -15,9 +16,9 @@ export function GenericPreviewList({previewData, amount, title}: Props) {
     const router = useRouter();
 
     return (
-        <YStack mb={40} minHeight={200}>
-            <XStack justifyContent='space-between' alignItems='center' px={10}>
-                <XStack alignItems='center' gap={10} mb={10}>
+        <YStack marginBottom={40} minHeight={200}>
+            <XStack justifyContent='space-between' alignItems='center' paddingHorizontal={10}>
+                <XStack alignItems='center' gap={10} marginBottom={10}>
                     <H2>{title}</H2>
                     <H5>({amount})</H5>
                 </XStack>
