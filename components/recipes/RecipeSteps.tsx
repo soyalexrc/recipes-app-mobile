@@ -2,6 +2,8 @@ import * as React from 'react';
 import {View} from "react-native";
 import {Accordion, Button, H3, H4, H5, Image, Paragraph, Square, Text, XStack, YStack} from "tamagui";
 import {Ionicons} from "@expo/vector-icons";
+import {useAppDispatch} from "../../store/hooks";
+import {increment} from "../../store/slices/counter";
 
 const sampleData = [
     {
@@ -27,11 +29,13 @@ const sampleData = [
 
 
 export function RecipeSteps() {
+    const dispatch = useAppDispatch()
+
     return (
         <YStack marginBottom={30}>
             <XStack marginBottom={20} justifyContent='space-between' alignItems='center'>
                 <H3>Steps (2)</H3>
-                <Button>Add step</Button>
+                <Button onPress={() => dispatch(increment())}>Add step</Button>
             </XStack>
             <Accordion overflow="hidden" width="100%" type="multiple">
                 {

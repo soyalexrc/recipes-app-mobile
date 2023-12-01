@@ -2,6 +2,7 @@ import {AlertDialog, Button, Card, H2, H3, H4, Paragraph, Sheet, Text, XStack, Y
 import {useState} from "react";
 import * as React from 'react';
 import {Ionicons} from "@expo/vector-icons";
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
 const sampleData = [
     {id: '1', quantity: 1, measure: 'spoon', product: 'Flour'},
@@ -31,13 +32,16 @@ export function RecipeIngredients() {
     const [position, setPosition] = useState(0)
     const [open, setOpen] = useState(false)
     const snapPoints = [85];
+
+    const count = useAppSelector((state) => state.counter.value)
+
     return (
         <>
             <YStack space>
                 <XStack space $sm={{flexDirection: 'column', alignItems: 'center'}}>
                     <Button marginVertical={30} width='100%' onPress={() => setOpen(true)}>
                         <Text>
-                            Ingredients ({sampleData.length})
+                            Ingredients ({count})
                         </Text>
                     </Button>
                 </XStack>
@@ -67,7 +71,7 @@ export function RecipeIngredients() {
                     <Sheet.ScrollView showsVerticalScrollIndicator={false}>
                         <YStack>
                             {sampleData.map((data: any, index: number) => (
-                                <Card backgroundColor='#fff' width='100%' marginBottom={10}>
+                                <Card key={data.id} backgroundColor='#fff' width='100%' marginBottom={10}>
                                     <Card.Header>
                                         <H3>{data.product}</H3>
                                     </Card.Header>
