@@ -43,7 +43,7 @@ export function RecipeForm({control, errors}: Props) {
                 render={({ field: { onChange, onBlur, value } }) => (
                     <TextArea
                         id='description'
-                        size="8"
+                        size="$3"
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}

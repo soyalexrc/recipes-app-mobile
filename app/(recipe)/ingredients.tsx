@@ -76,16 +76,15 @@ export default function IngredientsScreen() {
     });
 
     const onPressNewIngredient = () => {
-
         setNewIngredient(true);
     }
 
-    useEffect(() => {
-        console.log(ingredients)
-        navigation.setOptions({
-            title: `Ingredients (${ingredients.length})`
-        })
-    }, [ingredients]);
+    // useEffect(() => {
+    //     console.log(ingredients)
+    //     navigation.setOptions({
+    //         title: `Ingredients (${ingredients.length})`
+    //     })
+    // }, [ingredients]);
 
 
     function CancelNewIngredient() {
@@ -202,7 +201,7 @@ export default function IngredientsScreen() {
                                             <TouchableOpacity onPress={() => onEditIngredient(index)}>
                                                 <Ionicons name="pencil" size={22} color="blue"/>
                                             </TouchableOpacity>
-                                            <AlertDialog native>
+                                            <AlertDialog>
                                                 <AlertDialog.Trigger asChild>
                                                     <TouchableOpacity>
                                                         <Ionicons name="trash" size={22} color="red"/>
@@ -218,6 +217,7 @@ export default function IngredientsScreen() {
                                                         exitStyle={{opacity: 0}}
                                                     />
                                                     <AlertDialog.Content
+                                                        marginHorizontal={20}
                                                         bordered
                                                         elevate
                                                         key="content"
