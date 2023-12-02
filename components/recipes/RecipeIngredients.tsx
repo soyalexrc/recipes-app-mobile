@@ -1,5 +1,5 @@
 import {AlertDialog, Button, Card, H2, H3, H4, Paragraph, Sheet, Text, XStack, YStack} from "tamagui";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import * as React from 'react';
 import {Ionicons} from "@expo/vector-icons";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -32,8 +32,18 @@ export function RecipeIngredients() {
     const [position, setPosition] = useState(0)
     const [open, setOpen] = useState(false)
     const snapPoints = [85];
+    const [mounted, setMounted] = useState<boolean>(false);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setMounted(true);
+        }, 2000);
+        return () => setMounted(false);
+    }, []);
 
     const count = useAppSelector((state) => state.counter.value)
+
+    if (!mounted) return <Text>Loading...</Text>
 
     return (
         <>
