@@ -9,6 +9,8 @@ import config from '../tamagui.config';
 import {initialWindowMetrics, SafeAreaProvider} from "react-native-safe-area-context";
 import {Provider} from "react-redux";
 import {store} from "../store";
+import 'react-native-gesture-handler';
+
 
 export {
     // Catch any errors thrown by the Layout component.

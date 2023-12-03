@@ -27,8 +27,8 @@ import {
     addNewIngredientToRecipe,
     deleteIngredientFromRecipe, editIngredient,
     Ingredient,
-    selectAddRecipe
-} from "../../store/slices/recipe/addRecipeSlice";
+    selectRecipe
+} from "../../store/slices/recipe/recipeSlice";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
@@ -40,7 +40,7 @@ type TypeOfAction = 'edit' | 'create';
 export default function IngredientsScreen() {
     const router = useRouter();
     const navigation = useNavigation();
-    const ingredients = useAppSelector(selectAddRecipe).ingredients;
+    const ingredients = useAppSelector(selectRecipe).ingredients;
     const dispatch = useAppDispatch();
     const flashListRef = useRef<any>();
     const [currentIngredientToEdit, setCurrentIngredientToEdit] = useState<number | null>(null);

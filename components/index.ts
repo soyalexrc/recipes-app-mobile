@@ -1,2 +1,2 @@
-export * from './Placeholder';
 export * from './CustomSelect';
+export * from './InformativeSheet';

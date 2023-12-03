@@ -26,7 +26,7 @@ import {
 } from "react-hook-form";
 import {AddRecipeFormData} from "../../app/(recipe)/add-recipe";
 import {useAppDispatch} from "../../store/hooks";
-import {updateTitle} from "../../store/slices/recipe/addRecipeSlice";
+import {updateTitle} from "../../store/slices/recipe/recipeSlice";
 import {useMemo, useState} from "react";
 import {Ionicons, Octicons} from "@expo/vector-icons";
 import {LinearGradient} from 'tamagui/linear-gradient'

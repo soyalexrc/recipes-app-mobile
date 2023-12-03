@@ -9,7 +9,7 @@ import {useForm} from "react-hook-form";
 import * as React from "react";
 import {useAppSelector} from "../../store/hooks";
 import {RootState} from "../../store";
-import {selectAddRecipe} from "../../store/slices/recipe/addRecipeSlice";
+import {selectAddRecipe, selectRecipe} from "../../store/slices/recipe/recipeSlice";
 import {useEffect} from "react";
 
 
@@ -21,9 +21,9 @@ export interface AddRecipeFormData {
 }
 
 export default function AddRecipeScreen() {
-    const title = useAppSelector(selectAddRecipe).title;
-    const ingredients = useAppSelector(selectAddRecipe).ingredients;
-    const steps = useAppSelector(selectAddRecipe).steps;
+    const title = useAppSelector(selectRecipe).title;
+    const ingredients = useAppSelector(selectRecipe).ingredients;
+    const steps = useAppSelector(selectRecipe).steps;
     const router = useRouter();
     const navigation = useNavigation();
     const {

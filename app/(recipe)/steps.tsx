@@ -25,9 +25,9 @@ import {
     addNewStep,
     deleteStep,
     editStep,
-    selectAddRecipe,
+    selectRecipe,
     Step
-} from "../../store/slices/recipe/addRecipeSlice";
+} from "../../store/slices/recipe/recipeSlice";
 import {useRef, useState} from "react";
 import {TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
@@ -36,7 +36,7 @@ import * as Picker from "expo-image-picker";
 export default function StepsScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch()
-    const steps = useAppSelector(selectAddRecipe).steps;
+    const steps = useAppSelector(selectRecipe).steps;
     const [createStep, setCreateStep] = useState<boolean>(false);
     const [currentStepToEdit, setCurrentStepToEdit] = useState<number | null>(null);
     const flashListRef = useRef<any>();
