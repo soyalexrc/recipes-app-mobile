@@ -1,6 +1,6 @@
 import {View} from "react-native";
 import {Stack} from "expo-router/stack";
-import {Button, ScrollView, Text, YStack} from "tamagui";
+import {Button, ScrollView, Text, XStack, YStack} from "tamagui";
 import {HeaderBackButton} from "@react-navigation/elements";
 import {useRouter, useNavigation, useFocusEffect} from "expo-router";
 import {ImagePicker, RecipeForm, RecipeSteps, RecipeIngredients} from "../../components/recipes";
@@ -10,12 +10,14 @@ import * as React from "react";
 import {useAppSelector} from "../../store/hooks";
 import {RootState} from "../../store";
 import {selectAddRecipe} from "../../store/slices/recipe/addRecipeSlice";
-import { useEffect} from "react";
+import {useEffect} from "react";
 
 
 export interface AddRecipeFormData {
     title: string;
     description: string;
+    estimatedTime: string;
+    amountOfPortions: string;
 }
 
 export default function AddRecipeScreen() {
@@ -30,7 +32,7 @@ export default function AddRecipeScreen() {
         control,
         handleSubmit,
         getValues,
-        formState: { errors },
+        formState: {errors},
     } = useForm<AddRecipeFormData>({
         defaultValues: {}
     })
@@ -50,7 +52,7 @@ export default function AddRecipeScreen() {
     }, [title]);
 
     return (
-        <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
             <ScrollView backgroundColor='#fff' f={1}>
                 <Stack.Screen
                     options={{
@@ -60,19 +62,21 @@ export default function AddRecipeScreen() {
                 />
                 <ImagePicker/>
                 <YStack padding={20}>
-                    <RecipeForm control={control} errors={errors}/>
-                    <Button marginVertical={30} width='100%' onPress={() => router.push('/(recipe)/ingredients')}>
-                        <Text>
-                            Ingredients ({ingredients.length})
-                        </Text>
-                    </Button>
-                    <Button width='100%' marginBottom={30}  onPress={() => router.push('/(recipe)/steps')}>
-                        <Text>
-                            Steps ({steps.length})
-                        </Text>
-                    </Button>
+                    <RecipeForm control={control} errors={errors} getValues={getValues} setValue={setValue}/>
+                    <XStack gap={10} marginVertical={30}>
+                        <Button flex={1} onPress={() => router.push('/(recipe)/ingredients')}>
+                            <Text>
+                                Ingredients ({ingredients.length})
+                            </Text>
+                        </Button>
+                        <Button flex={1} onPress={() => router.push('/(recipe)/steps')}>
+                            <Text>
+                                Steps ({steps.length})
+                            </Text>
+                        </Button>
+                    </XStack>
                     {/*<RecipeSteps/>*/}
-                    <Button  backgroundColor='lightgreen' onPress={onSubmit}>submit</Button>
+                    <Button backgroundColor='lightgreen' onPress={onSubmit}>submit</Button>
 
                 </YStack>
             </ScrollView>
