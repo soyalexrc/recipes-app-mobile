@@ -48,8 +48,7 @@ export function GenericPreviewList({previewData, amount, title}: Props) {
                                                 height={180}
                                                 style={{borderRadius: 10}}
                                             />
-                                            <H4 fontSize={18} lineHeight={25}>Pan de jamon navideno sample 2</H4>
-                                            <Paragraph>Pan de jamon navideno sample 2</Paragraph>
+                                            <H4 marginTop={10} fontSize={16} lineHeight={22}>Pan de jamon navideno sample 2 123 123 1</H4>
                                         </YStack>
                                     </TouchableWithoutFeedback>
                                 )
