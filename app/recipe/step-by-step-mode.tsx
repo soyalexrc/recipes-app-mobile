@@ -1,6 +1,6 @@
 import {Text, YStack, Progress, ScrollView, XStack, H4, Button, Image, H3, Paragraph} from "tamagui";
 import {Stack} from "expo-router/stack";
-import {Dimensions, TouchableOpacity} from "react-native";
+import {Dimensions, Platform, TouchableOpacity} from "react-native";
 import {useMemo, useState} from "react";
 import {useAppSelector} from "../../store/hooks";
 import {selectRecipe} from "../../store/slices/recipe/recipeSlice";
@@ -64,7 +64,7 @@ export default function StepByStepModeScreen() {
                     headerShown: false
                 }}
             />
-            <YStack paddingHorizontal={10} marginBottom={10}>
+            <YStack paddingHorizontal={10} marginBottom={10} marginTop={Platform.OS === 'android' ? 10 : 0}>
                 <XStack justifyContent='space-between' marginBottom={10}>
                     <TouchableOpacity onPress={() => router.back()}>
                         <Ionicons name="arrow-back" size={24} color="black" />

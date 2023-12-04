@@ -7,13 +7,18 @@ import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as React from "react";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {FullRecipe, Step, Ingredient} from "../../constants/interfaces/recipe";
-import {useAppDispatch} from "../../store/hooks";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {setRecipe} from "../../store/slices/recipe/recipeSlice";
+import {selectUser} from "../../store/slices/user/userSlice";
 
 const sampleData: FullRecipe = {
+    id: '1',
+    userId: '2',
     title: 'Pan de jamon',
+    category: 'Dinner',
     description: 'Tradicion venezolana en todo su esplendor',
     estimatedTime: '90 min',
+    typeOfPortion: 'Slice',
     amountOfPortions: '10',
     image: 'https://plus.unsplash.com/premium_photo-1663858367001-89e5c92d1e0e?q=80&w=1615&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     steps: [
@@ -78,11 +83,11 @@ const sampleData: FullRecipe = {
 }
 
 
-
 export default function RecipeViewScreen() {
     const router = useRouter();
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
+    const user = useAppSelector(selectUser);
 
     useFocusEffect(() => {
         navigation.setOptions({
@@ -92,23 +97,24 @@ export default function RecipeViewScreen() {
     })
 
     return (
-        <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
             <Stack.Screen
                 options={{
                     title: 'Recipe view',
-                    headerRight: props => (<HeaderRight {...props} />),
-                    headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()} />)
+                    headerRight: props => (
+                        <HeaderRight isOwner={sampleData.userId === user.id} {...props} />),
+                    headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()}/>)
                 }}
             />
             <ScrollView flex={1} backgroundColor='#fff'>
-            {/*    image*/}
-                <Image source={{ uri: sampleData.image }} style={{ width: '100%', height: 350 }} />
+                {/*    image*/}
+                <Image source={{uri: sampleData.image}} style={{width: '100%', height: 350}}/>
 
 
-            {/*  info  */}
+                {/*  info  */}
                 <YStack padding={10} gap={10}>
                     <XStack alignItems='center' gap={10}>
-                        <AntDesign name="like2" size={20} color="black" />
+                        <AntDesign name="like2" size={20} color="black"/>
                         <XStack gap={5}>
                             <Paragraph fontWeight='900'>96 people</Paragraph>
                             <Paragraph>like this</Paragraph>
@@ -116,7 +122,7 @@ export default function RecipeViewScreen() {
                     </XStack>
 
                     <XStack gap={10}>
-                        <AntDesign name="clockcircleo" size={20} color="black" />
+                        <AntDesign name="clockcircleo" size={20} color="black"/>
                         <XStack gap={2}>
                             <Paragraph>ready in </Paragraph>
                             <Paragraph fontWeight='900'>under {sampleData.estimatedTime}</Paragraph>
@@ -129,7 +135,8 @@ export default function RecipeViewScreen() {
 
                 <YStack padding={10}>
                     <H4>Ingredients for</H4>
-                    <Paragraph>{sampleData.amountOfPortions} portions</Paragraph>
+                    <Paragraph
+                        fontSize={16}>{sampleData.amountOfPortions} {`${sampleData.typeOfPortion}${Number(sampleData.amountOfPortions) > 1 && 's'}`}</Paragraph>
 
                     <YStack marginVertical={20}>
                         {
@@ -150,7 +157,7 @@ export default function RecipeViewScreen() {
                     </YStack>
                 </YStack>
 
-            {/*    Nutrition information*/}
+                {/*    Nutrition information*/}
                 <YStack padding={10}>
                     <H4>Nutrition information</H4>
                     <YStack backgroundColor='lightgray' height={100} justifyContent='center' alignItems='center'>
@@ -166,15 +173,15 @@ export default function RecipeViewScreen() {
                     </YStack>
                 </YStack>
 
-            {/*    Preparation*/}
+                {/*    Preparation*/}
 
                 <YStack paddingHorizontal={10} paddingVertical={20} backgroundColor='#f2f2f2'>
                     <H4>Preparation</H4>
                     <Button
                         marginVertical={10}
-                        iconAfter={<Ionicons name="play" size={20} color="black" />}
+                        iconAfter={<Ionicons name="play" size={20} color="black"/>}
                         backgroundColor='lightblue'
-                        onPress={() => router.push('/(recipe)/step-by-step-mode')}
+                        onPress={() => router.push('/recipe/step-by-step-mode')}
                     >
                         Step-by-step mode
                     </Button>
@@ -182,13 +189,19 @@ export default function RecipeViewScreen() {
                     <YStack marginVertical={10}>
                         {
                             sampleData.steps.map((step: Step, index: number) => (
-                                <XStack gap={10} key={step.id} backgroundColor='#fff' padding={10} marginBottom={10} borderRadius={10}>
+                                <XStack gap={10} key={step.id} backgroundColor='#fff' padding={10} marginBottom={10}
+                                        borderRadius={10}>
                                     <H4>{index + 1}.</H4>
                                     <YStack flex={1}>
                                         <H4 fontSize={18} marginBottom={5}>{step.title}</H4>
                                         {
                                             step.image &&
-                                            <Image source={{ uri: step.image }} style={{ width: '100%', height: 200, borderRadius: 12, marginBottom: 10 }} />
+                                            <Image source={{uri: step.image}} style={{
+                                                width: '100%',
+                                                height: 200,
+                                                borderRadius: 12,
+                                                marginBottom: 10
+                                            }}/>
                                         }
                                         <Paragraph>{step.description}</Paragraph>
                                     </YStack>
@@ -204,15 +217,25 @@ export default function RecipeViewScreen() {
     )
 }
 
-function HeaderRight() {
+function HeaderRight(props: { isOwner: boolean }) {
+    const router = useRouter();
     return (
         <XStack gap={20}>
-           <TouchableOpacity>
-               <Ionicons name="share-social" size={24} color="black" />
-           </TouchableOpacity>
-           <TouchableOpacity>
-               <Ionicons name="heart-outline" size={24} color="black" />
-           </TouchableOpacity>
+            <TouchableOpacity>
+                <Ionicons name="share-social" size={24} color="black"/>
+            </TouchableOpacity>
+            {
+                props.isOwner &&
+                <TouchableOpacity onPress={() => router.push('/recipe/add-edit/2')}>
+                    <Ionicons name="pencil" size={24} color="black"/>
+                </TouchableOpacity>
+            }
+            {
+                !props.isOwner &&
+                <TouchableOpacity>
+                    <Ionicons name="heart-outline" size={24} color="black"/>
+                </TouchableOpacity>
+            }
         </XStack>
     )
 }

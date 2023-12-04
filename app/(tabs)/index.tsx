@@ -40,10 +40,22 @@ export default function MyRecipesScreen() {
                         amount={20}
                     />
                     <GenericPreviewList
+                        title='Morning snack'
+                        category='morning-snacks'
+                        previewData={sampleData}
+                        amount={20}
+                    />
+                    <GenericPreviewList
                         title='Lunch'
                         category='breakfasts'
                         previewData={[]}
                         amount={0}
+                    />
+                    <GenericPreviewList
+                        title='Afternoon snack'
+                        category='afternoon-snacks'
+                        previewData={sampleData}
+                        amount={20}
                     />
                     <GenericPreviewList
                         title='Dinner'
@@ -61,7 +73,7 @@ export default function MyRecipesScreen() {
                 <YStack height={50} />
 
             </ScrollView>
-            <Button onPress={() => router.push('/(recipe)/add-recipe')} backgroundColor='$background' icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
+            <Button onPress={() => router.push('/recipe/add-edit/new')} backgroundColor='$background' icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
                 Add recipe
             </Button>
         </YStack>

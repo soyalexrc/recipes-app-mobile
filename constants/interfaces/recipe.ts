@@ -20,11 +20,15 @@ export interface Step {
 }
 
 export interface FullRecipe {
+    id?: string;
+    userId?: string;
+    category: string;
     title: string;
     image: string;
     estimatedTime: string;
     description: string;
     amountOfPortions: string;
+    typeOfPortion: string;
     steps: Step[],
     ingredients: Ingredient[]
 }

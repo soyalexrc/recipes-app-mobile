@@ -24,7 +24,7 @@ import {
     FieldPathValue,
     SetValueConfig, UseFormSetValue
 } from "react-hook-form";
-import {AddRecipeFormData} from "../../app/(recipe)/add-recipe";
+import {AddRecipeFormData} from "../../app/recipe/add-edit/[id]";
 import {useAppDispatch} from "../../store/hooks";
 import {updateTitle} from "../../store/slices/recipe/recipeSlice";
 import {useMemo, useState} from "react";
@@ -52,16 +52,18 @@ const timeOptions = [
 ]
 
 const portions = [
-    {name: '1 portion', value: '1'},
-    {name: '2 portion', value: '2'},
-    {name: '3 portion', value: '3'},
-    {name: '4 portion', value: '4'},
-    {name: '5 portion', value: '5'},
-    {name: '6 portion', value: '6'},
-    {name: '7 portion', value: '7'},
-    {name: '8 portion', value: '8'},
-    {name: '9 portion', value: '9'},
-    {name: '10 portion', value: '10'},
+    {name: 'Person', value: 'Person'},
+    {name: 'Ration', value: 'Ration'},
+    {name: 'Unit', value: 'Unit'},
+    {name: 'Slice', value: 'Slice'},
+]
+
+const categoryOptions = [
+    {name: 'Breakfast', value: 'breakfast'},
+    {name: 'Morning snack', value: 'morning-snack'},
+    {name: 'Lunch', value: 'lunch'},
+    {name: 'Afternoon snack', value: 'afternoon-snack'},
+    {name: 'Dinner', value: 'dinner'}
 ]
 
 export function RecipeForm({control, errors, getValues, setValue}: Props) {
@@ -108,28 +110,63 @@ export function RecipeForm({control, errors, getValues, setValue}: Props) {
 
             <YStack marginVertical={10}>
                 <Label flex={1} fb={0}>
+                   Category
+                </Label>
+                <CustomSelect title='Category' options={categoryOptions} value={getValues('category')}
+                              onValueChange={(value) => setValue('category', value)}/>
+                {errors.category && <Text>This is required.</Text>}
+            </YStack>
+
+           <XStack justifyContent='center'>
+               <View style={styles.separator} />
+           </XStack>
+
+            <YStack marginVertical={10}>
+                <Label flex={1} fb={0}>
                     Estimated Time
                 </Label>
                 <CustomSelect title='Estimated time' options={timeOptions} value={getValues('estimatedTime')}
                               onValueChange={(value) => setValue('estimatedTime', value)}/>
+                {errors.estimatedTime && <Text>This is required.</Text>}
             </YStack>
 
 
             <YStack >
                 <Label flex={1} fb={0}>
-                    How many portions?
+                    Ingredients for how many?
                 </Label>
-                <CustomSelect title='Amount of portions' options={portions} value={getValues('amountOfPortions')}
-                              onValueChange={(value) => setValue('amountOfPortions', value)}/>
+               <XStack gap={10}>
+                  <YStack flex={1}>
+                      <Controller
+                          control={control}
+                          rules={{required: true}}
+                          render={({field: {onChange, onBlur, value}}) => (
+                              <Input
+                                  id='amountOfPortions'
+                                  size="$4"
+                                  onBlur={onBlur}
+                                  onChangeText={onChange}
+                                  value={value}/>
+                          )}
+                          name='amountOfPortions'
+                      />
+                      {errors.amountOfPortions && <Text>This is required.</Text>}
+                  </YStack>
+                   <CustomSelect title='Type of portion' options={portions} value={getValues('typeOfPortion')}
+                                 onValueChange={(value) => setValue('typeOfPortion', value)}/>
+                   {errors.typeOfPortion && <Text>This is required.</Text>}
+               </XStack>
             </YStack>
-
+            <XStack justifyContent='center'>
+                <View style={styles.separator} />
+            </XStack>
         </YStack>
     )
 }
 
 const styles = StyleSheet.create({
     separator: {
-        marginTop: 10,
+        marginTop: 20,
         height: 1,
         backgroundColor: 'lightgray',
         width: '80%',

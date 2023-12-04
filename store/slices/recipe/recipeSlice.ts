@@ -62,7 +62,11 @@ export const recipeSlice = createSlice({
                 ingredients,
                 steps,
                 image,
-                description
+                description,
+                userId,
+                id,
+                typeOfPortion,
+                category
             } = action.payload;
 
             state.ingredients = ingredients;
@@ -72,8 +76,15 @@ export const recipeSlice = createSlice({
             state.estimatedTime = estimatedTime;
             state.steps = steps;
             state.image = image;
+            state.category = category;
+            state.userId = userId;
+            state.id = id,
+            state.typeOfPortion = typeOfPortion
+        },
+        resetRecipe: (state) => {
+            state = initialState;
         }
-    },
+    }
 })
 
 export const {
@@ -84,7 +95,8 @@ export const {
     addNewStep,
     editStep,
     deleteStep,
-    setRecipe
+    setRecipe,
+    resetRecipe
 } = recipeSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
