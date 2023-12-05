@@ -23,8 +23,8 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 tabBarStyle: {
-                    height: Platform.OS === 'android' ? 90 : 80,
-                    paddingVertical: Platform.OS === 'android' ? 10 : 0,
+                    height: Platform.OS === 'android' ? 60 : 80,
+                    paddingBottom: Platform.OS === 'android' ? 5 : 0,
                 },
                 tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
             }}>
