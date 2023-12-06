@@ -48,26 +48,29 @@ export default function RootLayout() {
         return null;
     }
 
-    return <RootLayoutNav/>;
+    return (
+        <Provider store={store}>
+            <RootLayoutNav/>
+        </Provider>
+    );
 }
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
 
     return (
-        <Provider store={store}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <TamaguiProvider config={config}>
-                    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-                        <Stack>
-                            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-                            <Stack.Screen name="recipe" options={{headerShown: false}}/>
-                            <Stack.Screen name="modal" options={{presentation: 'modal'}}/>
-                        </Stack>
-                    </SafeAreaProvider>
-                </TamaguiProvider>
-            </ThemeProvider>
-        </Provider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <TamaguiProvider config={config}>
+                <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+                    <Stack>
+                        <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                        <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+                        <Stack.Screen name="recipe" options={{headerShown: false}}/>
+                        <Stack.Screen name="modal" options={{presentation: 'modal'}}/>
+                    </Stack>
+                </SafeAreaProvider>
+            </TamaguiProvider>
+        </ThemeProvider>
+
     );
 }
