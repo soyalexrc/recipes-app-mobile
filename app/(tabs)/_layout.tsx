@@ -4,6 +4,9 @@ import {Platform, Pressable, Text, useColorScheme, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
+import { useAppSelector } from '../../store/hooks';
+import { selectI18n } from '../../store/slices/i18n/i18nSlice';
+import { getDictionary } from '../../i18n';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -18,6 +21,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
+    const lng = useAppSelector(selectI18n).language;
 
     return (
         <Tabs
@@ -31,7 +35,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'My Recipes',
+                    title: getDictionary(lng).myRecipes.title,
                     tabBarIcon: ({color}) => <TabBarIcon name="newspaper-outline" color={color}/>,
                     headerRight: () => (
                         <Link href="/modal" asChild>

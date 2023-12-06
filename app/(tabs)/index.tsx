@@ -3,6 +3,8 @@ import {Button, YStack, Text, ScrollView} from "tamagui";
 import {Ionicons} from '@expo/vector-icons';
 import {GenericPreviewList} from "../../components/recipes";
 import {useRouter} from "expo-router";
+import { selectI18n } from '../../store/slices/i18n/i18nSlice';
+import { useAppSelector } from '../../store/hooks';
 
 const sampleData = [
     {
@@ -25,7 +27,6 @@ const sampleData = [
 ]
 
 export default function MyRecipesScreen() {
-
     const router = useRouter();
 
     return (

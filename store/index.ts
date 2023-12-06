@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import counterReducer from './slices/counter';
 import recipeReducer from './slices/recipe/recipeSlice';
 import userReducer from './slices/user/userSlice';
+import i18nReducer from './slices/i18n/i18nSlice';
 
 export const store = configureStore({
     reducer: {
         counter: counterReducer,
         recipe: recipeReducer,
-        user: userReducer
+        user: userReducer,
+        i18n: i18nReducer
     },
 })
 

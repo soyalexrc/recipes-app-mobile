@@ -10,6 +10,9 @@ import {initialWindowMetrics, SafeAreaProvider} from "react-native-safe-area-con
 import {Provider} from "react-redux";
 import {store} from "../store";
 import 'react-native-gesture-handler';
+import { useAppSelector } from '../store/hooks';
+import { selectI18n } from '../store/slices/i18n/i18nSlice';
+import { useDataFetcher } from '../utils/hooks';
 
 
 export {
@@ -57,6 +60,9 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
+    const {isReady} = useDataFetcher();
+    
+    console.log(isReady);
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
