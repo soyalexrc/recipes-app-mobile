@@ -12,7 +12,8 @@ import {store} from "../store";
 import 'react-native-gesture-handler';
 import { useAppSelector } from '../store/hooks';
 import { selectI18n } from '../store/slices/i18n/i18nSlice';
-import { useDataFetcher } from '../utils/hooks';
+import { useInitializeApp } from '../utils/hooks';
+import { View, Text } from '../components/Themed';
 
 
 export {
@@ -60,9 +61,17 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
-    const {isReady} = useDataFetcher();
+    const {isReady} = useInitializeApp();
     
     console.log(isReady);
+
+    if  (!isReady) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Loading...</Text>
+            </View>
+        )
+    }
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
