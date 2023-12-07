@@ -221,7 +221,7 @@ export default function RecipeViewScreen() {
 
 function HeaderRight(props: { isOwner: boolean }) {
     const router = useRouter();
-    const {share, success, error} = useShare();
+    const {share} = useShare();
 
     return (
         <XStack gap={20}>
