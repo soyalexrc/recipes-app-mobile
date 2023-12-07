@@ -25,12 +25,14 @@ import {
     SetValueConfig, UseFormSetValue
 } from "react-hook-form";
 import {AddRecipeFormData} from "../../app/recipe/add-edit/[id]";
-import {useAppDispatch} from "../../store/hooks";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {updateTitle} from "../../store/slices/recipe/recipeSlice";
 import {useMemo, useState} from "react";
 import {Ionicons, Octicons} from "@expo/vector-icons";
 import {LinearGradient} from 'tamagui/linear-gradient'
 import {CustomSelect} from "../CustomSelect";
+import {selectI18n} from "../../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../../i18n";
 
 interface Props {
     control: Control<AddRecipeFormData, any>,
@@ -67,6 +69,7 @@ const categoryOptions = [
 ]
 
 export function RecipeForm({control, errors, getValues, setValue}: Props) {
+    const lng = useAppSelector(selectI18n).language;
     const dispatch = useAppDispatch();
     const handleUpdateTitle = (title: string, fn: (v: string) => void) => {
         dispatch(updateTitle(title));
@@ -75,7 +78,7 @@ export function RecipeForm({control, errors, getValues, setValue}: Props) {
 
     return (
         <YStack>
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{getDictionary(lng).recipeForm.titleLabel}</Label>
             <Controller
                 control={control}
                 rules={{required: true}}
@@ -89,9 +92,9 @@ export function RecipeForm({control, errors, getValues, setValue}: Props) {
                 )}
                 name='title'
             />
-            {errors.title && <Text>This is required.</Text>}
+            {errors.title && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
 
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{getDictionary(lng).recipeForm.descriptionLabel}</Label>
             <Controller
                 control={control}
                 rules={{required: true}}
@@ -106,59 +109,59 @@ export function RecipeForm({control, errors, getValues, setValue}: Props) {
                 )}
                 name='description'
             />
-            {errors.description && <Text>This is required.</Text>}
+            {errors.description && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
 
             <YStack marginVertical={10}>
                 <Label flex={1} fb={0}>
-                   Category
+                    {getDictionary(lng).recipeForm.categoryLabel}
                 </Label>
                 <CustomSelect title='Category' options={categoryOptions} value={getValues('category')}
                               onValueChange={(value) => setValue('category', value)}/>
-                {errors.category && <Text>This is required.</Text>}
+                {errors.category && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
             </YStack>
 
-           <XStack justifyContent='center'>
-               <View style={styles.separator} />
-           </XStack>
+            <XStack justifyContent='center'>
+                <View style={styles.separator}/>
+            </XStack>
 
             <YStack marginVertical={10}>
                 <Label flex={1} fb={0}>
-                    Estimated Time
+                    {getDictionary(lng).recipeForm.estimatedTimeLabel}
                 </Label>
-                <CustomSelect title='Estimated time' options={timeOptions} value={getValues('estimatedTime')}
+                <CustomSelect title={getDictionary(lng).recipeForm.estimatedTimeLabel} options={timeOptions} value={getValues('estimatedTime')}
                               onValueChange={(value) => setValue('estimatedTime', value)}/>
-                {errors.estimatedTime && <Text>This is required.</Text>}
+                {errors.estimatedTime && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
             </YStack>
 
 
-            <YStack >
+            <YStack>
                 <Label flex={1} fb={0}>
-                    Ingredients for how many?
+                    {getDictionary(lng).recipeForm.ingredientsForHowManyLabel}
                 </Label>
-               <XStack gap={10}>
-                  <YStack flex={1}>
-                      <Controller
-                          control={control}
-                          rules={{required: true}}
-                          render={({field: {onChange, onBlur, value}}) => (
-                              <Input
-                                  id='amountOfPortions'
-                                  size="$4"
-                                  onBlur={onBlur}
-                                  onChangeText={onChange}
-                                  value={value}/>
-                          )}
-                          name='amountOfPortions'
-                      />
-                      {errors.amountOfPortions && <Text>This is required.</Text>}
-                  </YStack>
-                   <CustomSelect title='Type of portion' options={portions} value={getValues('typeOfPortion')}
-                                 onValueChange={(value) => setValue('typeOfPortion', value)}/>
-                   {errors.typeOfPortion && <Text>This is required.</Text>}
-               </XStack>
+                <XStack gap={10}>
+                    <YStack flex={1}>
+                        <Controller
+                            control={control}
+                            rules={{required: true}}
+                            render={({field: {onChange, onBlur, value}}) => (
+                                <Input
+                                    id='amountOfPortions'
+                                    size="$4"
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}/>
+                            )}
+                            name='amountOfPortions'
+                        />
+                        {errors.amountOfPortions && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
+                    </YStack>
+                    <CustomSelect title={getDictionary(lng).recipeForm.typeOfPortionLabel} options={portions} value={getValues('typeOfPortion')}
+                                  onValueChange={(value) => setValue('typeOfPortion', value)}/>
+                    {errors.typeOfPortion && <Text>{getDictionary(lng).recipeForm.requiredField}</Text>}
+                </XStack>
             </YStack>
             <XStack justifyContent='center'>
-                <View style={styles.separator} />
+                <View style={styles.separator}/>
             </XStack>
         </YStack>
     )

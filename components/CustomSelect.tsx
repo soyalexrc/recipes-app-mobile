@@ -3,6 +3,9 @@ import {useMemo, useState} from "react";
 import {Ionicons} from "@expo/vector-icons";
 import {LinearGradient} from "tamagui/linear-gradient";
 import * as React from "react";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
+import {selectI18n} from "../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../i18n";
 
 interface Props extends SelectProps {
     title: string;
@@ -10,6 +13,7 @@ interface Props extends SelectProps {
 }
 
 export function CustomSelect(props: Props) {
+    const lng = useAppSelector(selectI18n).language;
 
     return (
         <Select
@@ -20,7 +24,7 @@ export function CustomSelect(props: Props) {
             {...props}
         >
             <Select.Trigger flex={1} iconAfter={<Ionicons name="chevron-down" size={20} color="black" />}>
-                <Select.Value placeholder="Select an option" />
+                <Select.Value placeholder={getDictionary(lng).recipeForm.selectOption} />
             </Select.Trigger>
 
             <Adapt  platform="touch">

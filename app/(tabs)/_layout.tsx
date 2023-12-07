@@ -35,7 +35,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: getDictionary(lng).myRecipes.title,
+                    title: getDictionary(lng).myRecipes.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="newspaper-outline" color={color}/>,
                     headerRight: () => (
                         <Link href="/modal" asChild>
@@ -56,21 +56,21 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="discovery"
                 options={{
-                    title: 'Discovery',
+                    title: getDictionary(lng).discovery.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
                 }}
             />
             <Tabs.Screen
                 name="community"
                 options={{
-                    title: 'Community',
+                    title: getDictionary(lng).community.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="people" color={color}/>,
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'Profile',
+                    title: getDictionary(lng).profile.pageTitle,
                     headerShown: false,
                     tabBarIcon: ({color}) => <TabBarIcon name="person-circle-outline" color={color}/>,
                 }}

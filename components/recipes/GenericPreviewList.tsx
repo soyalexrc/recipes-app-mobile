@@ -18,9 +18,9 @@ export function GenericPreviewList({previewData, amount, title}: Props) {
     return (
         <YStack marginBottom={40} minHeight={200}>
             <XStack justifyContent='space-between' alignItems='center' paddingHorizontal={10}>
-                <XStack alignItems='center' gap={10} marginBottom={10}>
-                    <H3>{title}</H3>
-                    <H5>({amount})</H5>
+                <XStack alignItems='center' width='70%' gap={10} marginBottom={10}>
+                    <H3 lineHeight={26}>{title} <H5>({amount})</H5></H3>
+
                 </XStack>
                 {
                     previewData.length > 0 &&
@@ -38,7 +38,7 @@ export function GenericPreviewList({previewData, amount, title}: Props) {
                     <FlashList
                         renderItem={({item}) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => router.push('/recipe')}>
+                                    <TouchableWithoutFeedback onPress={() => router.push('/recipe/detalle/123')}>
                                         <YStack width={200}  mx={5}>
                                             <Image
                                                 source={{

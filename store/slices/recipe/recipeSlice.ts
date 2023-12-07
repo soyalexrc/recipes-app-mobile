@@ -15,7 +15,11 @@ const initialState: FullRecipe = {
     estimatedTime: '',
     image: '',
     steps: [],
-    ingredients: []
+    ingredients: [],
+    typeOfPortion: '',
+    category: '',
+    id: null,
+    userId: null
 }
 
 export const recipeSlice = createSlice({
@@ -81,9 +85,7 @@ export const recipeSlice = createSlice({
             state.id = id,
             state.typeOfPortion = typeOfPortion
         },
-        resetRecipe: (state) => {
-            state = initialState;
-        }
+        resetRecipe: () => initialState,
     }
 })
 

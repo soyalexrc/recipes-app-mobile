@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import * as Localization from 'expo-localization';
 
 function getLocale() {
-    const locale =  Localization.locale.split('-')[0];
+    const locale =  Localization.locale.substring(0, 2);
 
     if (locale !== 'es' && locale !== 'en') return 'en';
 

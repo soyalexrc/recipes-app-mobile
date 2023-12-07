@@ -2,14 +2,14 @@ import {TouchableOpacity, View} from "react-native";
 import {Stack} from "expo-router/stack";
 import {Button, H3, H4, H5, H6, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
 import {HeaderBackButton} from "@react-navigation/elements";
-import {useFocusEffect, useNavigation, useRouter} from 'expo-router';
+import {useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as React from "react";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {FullRecipe, Step, Ingredient} from "../../constants/interfaces/recipe";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {setRecipe} from "../../store/slices/recipe/recipeSlice";
-import {selectUser} from "../../store/slices/user/userSlice";
+import {FullRecipe, Step, Ingredient} from "../../../constants/interfaces/recipe";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks";
+import {setRecipe} from "../../../store/slices/recipe/recipeSlice";
+import {selectUser} from "../../../store/slices/user/userSlice";
 
 const sampleData: FullRecipe = {
     id: '1',
@@ -88,6 +88,8 @@ export default function RecipeViewScreen() {
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
+    const {id} = useLocalSearchParams<{id: string}>();
+    console.log(id);
 
     useFocusEffect(() => {
         navigation.setOptions({

@@ -3,8 +3,12 @@ import {Button, Image, Text, YStack} from "tamagui";
 import * as Picker from 'expo-image-picker';
 import {useState} from "react";
 import * as React from 'react';
+import {useAppSelector} from "../../store/hooks";
+import {selectI18n} from "../../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../../i18n";
 
 export function ImagePicker() {
+    const lng = useAppSelector(selectI18n).language;
     const [image, setImage] = useState<any>(null);
 
     const pickImage = async () => {
@@ -16,8 +20,6 @@ export function ImagePicker() {
             quality: 1,
         });
 
-        console.log(result);
-
         if (!result.canceled) {
             setImage(result.assets[0].uri);
         }
@@ -26,7 +28,7 @@ export function ImagePicker() {
     return (
         <YStack>
             {image && <Image source={{ uri: image }} style={{ width: '100%', height: 250 }} />}
-            <Button height={image ? 40 : 250} onPress={pickImage}>Select a picture</Button>
+            <Button height={image ? 40 : 250} onPress={pickImage}>{getDictionary(lng).recipeForm.selectPicture}</Button>
         </YStack>
     )
 }

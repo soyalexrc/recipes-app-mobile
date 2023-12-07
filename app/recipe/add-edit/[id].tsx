@@ -11,6 +11,8 @@ import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {deleteStep, resetRecipe, selectRecipe} from "../../../store/slices/recipe/recipeSlice";
 import {ImagePicker, RecipeForm} from "../../../components/recipes";
 import {Ionicons} from "@expo/vector-icons";
+import {selectI18n} from "../../../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../../../i18n";
 
 
 
@@ -25,6 +27,7 @@ export interface AddRecipeFormData {
 
 export default function AddEditRecipeScreen() {
     const recipe = useAppSelector(selectRecipe);
+    const lng = useAppSelector(selectI18n).language;
     const router = useRouter();
     const {id} = useLocalSearchParams<{id: string}>();
     const dispatch = useAppDispatch();
@@ -45,7 +48,7 @@ export default function AddEditRecipeScreen() {
         if (id === 'new') {
             dispatch(resetRecipe())
             navigation.setOptions({
-                title: 'New Recipe'
+                title: getDictionary(lng).recipeForm.newRecipe
             })
         } else {
             navigation.setOptions({
@@ -73,9 +76,9 @@ export default function AddEditRecipeScreen() {
             <ScrollView backgroundColor='#fff' f={1}>
                 <Stack.Screen
                     options={{
-                        title: 'New recipe',
+                        title: getDictionary(lng).recipeForm.newRecipe,
                         headerRight: props => <HeaderRight isOwner={id === recipe.userId} />,
-                        headerLeft: props => <HeaderBackButton {...props} onPress={() => router.back()}/>
+                        headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
                     }}
                 />
                 <ImagePicker/>
@@ -83,16 +86,16 @@ export default function AddEditRecipeScreen() {
                     <RecipeForm control={control} errors={errors} getValues={getValues} setValue={setValue}/>
                     <Button marginVertical={20} flex={1} onPress={() => router.push('/recipe/ingredients')}>
                         <Text>
-                            Ingredients ({recipe.ingredients.length})
+                            {getDictionary(lng).recipeForm.ingredientsLabel} ({recipe.ingredients.length})
                         </Text>
                     </Button>
                     <Button marginBottom={20} flex={1} onPress={() => router.push('/recipe/steps')}>
                         <Text>
-                            Steps ({recipe.steps.length})
+                            {getDictionary(lng).recipeForm.stepsLabel} ({recipe.steps.length})
                         </Text>
                     </Button>
                     {/*<RecipeSteps/>*/}
-                    <Button backgroundColor='lightgreen' onPress={onSubmit}>submit</Button>
+                    <Button backgroundColor='lightgreen' onPress={onSubmit}>{getDictionary(lng).recipeForm.submitLabel}</Button>
 
                 </YStack>
             </ScrollView>

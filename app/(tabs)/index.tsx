@@ -5,6 +5,7 @@ import {GenericPreviewList} from "../../components/recipes";
 import {useRouter} from "expo-router";
 import { selectI18n } from '../../store/slices/i18n/i18nSlice';
 import { useAppSelector } from '../../store/hooks';
+import {getDictionary} from "../../i18n";
 
 const sampleData = [
     {
@@ -28,6 +29,7 @@ const sampleData = [
 
 export default function MyRecipesScreen() {
     const router = useRouter();
+    const lng = useAppSelector(selectI18n).language;
 
     return (
         <YStack style={styles.container}>
@@ -35,39 +37,33 @@ export default function MyRecipesScreen() {
             <ScrollView f={1} w='100%' showsVerticalScrollIndicator={false}>
                 <YStack py={10}>
                     <GenericPreviewList
-                        title='Breakfast'
+                        title={getDictionary(lng).myRecipes.breakfastTitle}
                         category='breakfasts'
                         previewData={sampleData}
                         amount={20}
                     />
                     <GenericPreviewList
-                        title='Morning snack'
+                        title={getDictionary(lng).myRecipes.morningSnackTitle}
                         category='morning-snacks'
                         previewData={sampleData}
                         amount={20}
                     />
                     <GenericPreviewList
-                        title='Lunch'
+                        title={getDictionary(lng).myRecipes.lunchTitle}
                         category='breakfasts'
                         previewData={[]}
                         amount={0}
                     />
                     <GenericPreviewList
-                        title='Afternoon snack'
+                        title={getDictionary(lng).myRecipes.afternoonSnack}
                         category='afternoon-snacks'
                         previewData={sampleData}
                         amount={20}
                     />
                     <GenericPreviewList
-                        title='Dinner'
+                        title={getDictionary(lng).myRecipes.dinnerTitle}
                         category='breakfasts'
                         previewData={sampleData.slice(0, 1)}
-                        amount={20}
-                    />
-                    <GenericPreviewList
-                        title='Dessert'
-                        category='breakfasts'
-                        previewData={sampleData.slice(0, 2)}
                         amount={20}
                     />
                 </YStack>
@@ -75,7 +71,7 @@ export default function MyRecipesScreen() {
 
             </ScrollView>
             <Button onPress={() => router.push('/recipe/add-edit/new')} backgroundColor='$background' icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
-                Add recipe
+                {getDictionary(lng).common.addRecipe}
             </Button>
         </YStack>
     );

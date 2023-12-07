@@ -14,6 +14,7 @@ import { useAppSelector } from '../store/hooks';
 import { selectI18n } from '../store/slices/i18n/i18nSlice';
 import { useInitializeApp } from '../utils/hooks';
 import { View, Text } from '../components/Themed';
+import {getDictionary} from "../i18n";
 
 
 export {
@@ -62,13 +63,12 @@ export default function RootLayout() {
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
     const {isReady} = useInitializeApp();
-    
-    console.log(isReady);
+    const lng = useAppSelector(selectI18n).language;
 
     if  (!isReady) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Loading...</Text>
+                <Text>{getDictionary(lng).common.loading}</Text>
             </View>
         )
     }
