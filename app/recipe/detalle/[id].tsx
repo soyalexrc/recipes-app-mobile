@@ -10,6 +10,7 @@ import {FullRecipe, Step, Ingredient} from "../../../constants/interfaces/recipe
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {setRecipe} from "../../../store/slices/recipe/recipeSlice";
 import {selectUser} from "../../../store/slices/user/userSlice";
+import {useShare} from "../../../utils/hooks";
 
 const sampleData: FullRecipe = {
     id: '1',
@@ -89,7 +90,6 @@ export default function RecipeViewScreen() {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
     const {id} = useLocalSearchParams<{id: string}>();
-    console.log(id);
 
     useFocusEffect(() => {
         navigation.setOptions({
@@ -221,9 +221,11 @@ export default function RecipeViewScreen() {
 
 function HeaderRight(props: { isOwner: boolean }) {
     const router = useRouter();
+    const {share, success, error} = useShare();
+
     return (
         <XStack gap={20}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => share('https://google.com')}>
                 <Ionicons name="share-social" size={24} color="black"/>
             </TouchableOpacity>
             {
