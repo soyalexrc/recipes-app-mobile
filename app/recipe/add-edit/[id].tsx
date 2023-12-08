@@ -6,14 +6,16 @@ import {useRouter, useNavigation, useFocusEffect, useLocalSearchParams} from "ex
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useForm} from "react-hook-form";
 import * as React from "react";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {deleteStep, resetRecipe, selectRecipe} from "../../../store/slices/recipe/recipeSlice";
 import {ImagePicker, RecipeForm} from "../../../components/recipes";
 import {Ionicons} from "@expo/vector-icons";
 import {selectI18n} from "../../../store/slices/i18n/i18nSlice";
 import {getDictionary} from "../../../i18n";
-
+import {selectRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
+import {selectNavigation, updateCurrent, updatePrev} from "../../../store/slices/navigation/navigationSlice";
+import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 
 
 export interface AddRecipeFormData {
@@ -26,10 +28,11 @@ export interface AddRecipeFormData {
 }
 
 export default function AddEditRecipeScreen() {
-    const recipe = useAppSelector(selectRecipe);
+    const recipeForm = useAppSelector(selectRecipeForm);
     const lng = useAppSelector(selectI18n).language;
     const router = useRouter();
-    const {id} = useLocalSearchParams<{id: string}>();
+    const [loading, setLoading] = useState(true);
+    const {id} = useLocalSearchParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const {
@@ -42,69 +45,99 @@ export default function AddEditRecipeScreen() {
     } = useForm<AddRecipeFormData>({
         defaultValues: {}
     })
+
+    const {current, prev} = useAppSelector(selectNavigation);
+
     const onSubmit = handleSubmit((data) => console.log(data))
 
-    useFocusEffect(() => {
+    useEffect(() => {
+        dispatch(updatePrev(current))
+        dispatch(updateCurrent('add-edit'))
+
         if (id === 'new') {
-            dispatch(resetRecipe())
+            if (prev === 'my-recipes') {
+                dispatch(resetRecipe())
+            }
             navigation.setOptions({
                 title: getDictionary(lng).recipeForm.newRecipe
             })
         } else {
             navigation.setOptions({
-                title: recipe.title
+                title: recipeForm.title
             })
-            setValue('title', recipe.title);
-            setValue('typeOfPortion', recipe.typeOfPortion);
-            setValue('amountOfPortions', recipe.amountOfPortions);
-            setValue('description', recipe.description);
-            setValue('estimatedTime', recipe.estimatedTime);
-            setValue('category', recipe.category);
+            setValue('title', recipeForm.title);
+            setValue('typeOfPortion', recipeForm.typeOfPortion);
+            setValue('amountOfPortions', recipeForm.amountOfPortions);
+            setValue('description', recipeForm.description);
+            setValue('estimatedTime', recipeForm.estimatedTime);
+            setValue('category', recipeForm.category);
         }
-    })
-
+    }, []);
 
 
     useEffect(() => {
         navigation.setOptions({
-            title: recipe.title.length > 22 ? recipe.title.substring(0, 22).concat('...') : recipe.title
+            title: recipeForm.title.length > 22 ? recipeForm.title.substring(0, 22).concat('...') : recipeForm.title
         })
-    }, [recipe.title]);
+    }, [recipeForm.title]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 10)
+    }, []);
 
     return (
         <SafeAreaView edges={['bottom']} style={{flex: 1}}>
-            <ScrollView backgroundColor='#fff' f={1}>
-                <Stack.Screen
-                    options={{
-                        title: getDictionary(lng).recipeForm.newRecipe,
-                        headerRight: props => <HeaderRight isOwner={id === recipe.userId} />,
-                        headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
-                    }}
-                />
-                <ImagePicker/>
-                <YStack padding={20}>
-                    <RecipeForm control={control} errors={errors} getValues={getValues} setValue={setValue}/>
-                    <Button marginVertical={20} flex={1} onPress={() => router.push('/recipe/ingredients')}>
-                        <Text>
-                            {getDictionary(lng).recipeForm.ingredientsLabel} ({recipe.ingredients.length})
-                        </Text>
-                    </Button>
-                    <Button marginBottom={20} flex={1} onPress={() => router.push('/recipe/steps')}>
-                        <Text>
-                            {getDictionary(lng).recipeForm.stepsLabel} ({recipe.steps.length})
-                        </Text>
-                    </Button>
-                    {/*<RecipeSteps/>*/}
-                    <Button backgroundColor='lightgreen' onPress={onSubmit}>{getDictionary(lng).recipeForm.submitLabel}</Button>
+            <Stack.Screen
+                options={{
+                    title: getDictionary(lng).recipeForm.newRecipe,
+                    headerRight: props => <HeaderRight id={id} isOwner={id === recipeForm.userId}/>,
+                    headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
+                }}
+            />
+            {
+                loading &&
+                <Animated.View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+                               entering={FadeIn} exiting={FadeOut}>
+                    <Text>Loading...</Text>
+                </Animated.View>
+            }
 
-                </YStack>
-            </ScrollView>
+            {
+                !loading &&
+                <Animated.View style={{ flex: 1 }} entering={FadeIn.springify().delay(200)}>
+                    <ScrollView backgroundColor='#fff' flex={1}>
+                        <ImagePicker/>
+                        <YStack padding={20}>
+                            <RecipeForm control={control} errors={errors} getValues={getValues} setValue={setValue}/>
+                            <Button marginVertical={20} flex={1} onPress={() => router.push('/recipe/ingredients')}>
+                                <Text>
+                                    {getDictionary(lng).recipeForm.ingredientsLabel} ({recipeForm.ingredients.length})
+                                </Text>
+                            </Button>
+                            <Button marginBottom={20} flex={1} onPress={() => router.push('/recipe/steps')}>
+                                <Text>
+                                    {getDictionary(lng).recipeForm.stepsLabel} ({recipeForm.steps.length})
+                                </Text>
+                            </Button>
+                            {/*<RecipeSteps/>*/}
+                            <Button backgroundColor='lightgreen'
+                                    onPress={onSubmit}>{getDictionary(lng).recipeForm.submitLabel}</Button>
+
+                        </YStack>
+                    </ScrollView>
+
+                </Animated.View>
+            }
 
         </SafeAreaView>
     )
 }
 
-function HeaderRight(props: { isOwner: boolean }) {
+function HeaderRight(props: { isOwner: boolean, id: number }) {
+    const dispatch = useAppDispatch();
+
     if (!props.isOwner) {
         return;
     }
@@ -113,7 +146,7 @@ function HeaderRight(props: { isOwner: boolean }) {
         <AlertDialog>
             <AlertDialog.Trigger asChild>
                 <TouchableOpacity>
-                    <Ionicons name="trash" size={24} color="red" />
+                    <Ionicons name="trash" size={24} color="red"/>
                 </TouchableOpacity>
             </AlertDialog.Trigger>
 
@@ -158,7 +191,7 @@ function HeaderRight(props: { isOwner: boolean }) {
                             </AlertDialog.Cancel>
                             <AlertDialog.Action asChild>
                                 <Button
-                                    onPress={() => dispatch(deleteStep(index))}
+                                    onPress={() => dispatch(deleteStep(props.id))}
                                     theme="active">Accept</Button>
                             </AlertDialog.Action>
                         </XStack>

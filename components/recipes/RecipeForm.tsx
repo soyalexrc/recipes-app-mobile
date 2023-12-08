@@ -148,6 +148,7 @@ export function RecipeForm({control, errors, getValues, setValue}: Props) {
                                     id='amountOfPortions'
                                     size="$4"
                                     onBlur={onBlur}
+                                    keyboardType='numeric'
                                     onChangeText={onChange}
                                     value={value}/>
                             )}

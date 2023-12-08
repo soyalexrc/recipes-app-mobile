@@ -2,10 +2,11 @@ import {StyleSheet} from 'react-native';
 import {Button, YStack, Text, ScrollView} from "tamagui";
 import {Ionicons} from '@expo/vector-icons';
 import {GenericPreviewList} from "../../components/recipes";
-import {useRouter} from "expo-router";
+import {useFocusEffect, useRouter} from "expo-router";
 import { selectI18n } from '../../store/slices/i18n/i18nSlice';
-import { useAppSelector } from '../../store/hooks';
+import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {getDictionary} from "../../i18n";
+import {selectNavigation, updateCurrent, updatePrev} from "../../store/slices/navigation/navigationSlice";
 
 const sampleData = [
     {
@@ -30,6 +31,13 @@ const sampleData = [
 export default function MyRecipesScreen() {
     const router = useRouter();
     const lng = useAppSelector(selectI18n).language;
+    const {current, prev} = useAppSelector(selectNavigation);
+    const dispatch = useAppDispatch();
+
+    useFocusEffect(() => {
+        dispatch(updatePrev(current))
+        dispatch(updateCurrent('my-recipes'))
+    })
 
     return (
         <YStack style={styles.container}>

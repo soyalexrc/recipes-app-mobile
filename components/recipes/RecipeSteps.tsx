@@ -3,7 +3,7 @@ import {View} from "react-native";
 import {Accordion, Button, H3, H4, H5, Image, Paragraph, Square, Text, XStack, YStack} from "tamagui";
 import {Ionicons} from "@expo/vector-icons";
 import {useAppDispatch} from "../../store/hooks";
-import {increment} from "../../store/slices/counter";
+import {increment} from "../../store/slices/navigation/navigationSlice";
 
 const sampleData = [
     {

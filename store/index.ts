@@ -1,16 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
 // ...
-import counterReducer from './slices/counter';
+import navigationReducer from './slices/navigation/navigationSlice';
 import recipeReducer from './slices/recipe/recipeSlice';
+import recipeFormReducer from './slices/recipe/recipeFormSlice';
 import userReducer from './slices/user/userSlice';
 import i18nReducer from './slices/i18n/i18nSlice';
 
 export const store = configureStore({
     reducer: {
-        counter: counterReducer,
+        navigation: navigationReducer,
         recipe: recipeReducer,
         user: userReducer,
-        i18n: i18nReducer
+        i18n: i18nReducer,
+        recipeForm: recipeFormReducer
     },
 })
 

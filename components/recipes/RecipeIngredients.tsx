@@ -41,7 +41,6 @@ export function RecipeIngredients() {
         return () => setMounted(false);
     }, []);
 
-    const count = useAppSelector((state) => state.counter.value)
 
     if (!mounted) return <Text>Loading...</Text>
 
@@ -51,7 +50,7 @@ export function RecipeIngredients() {
                 <XStack space $sm={{flexDirection: 'column', alignItems: 'center'}}>
                     <Button marginVertical={30} width='100%' onPress={() => setOpen(true)}>
                         <Text>
-                            Ingredients ({count})
+                            Ingredients
                         </Text>
                     </Button>
                 </XStack>

@@ -17,20 +17,9 @@ export default function StepByStepModeScreen() {
     const steps = useAppSelector(selectRecipe).steps;
     const ingredients = useAppSelector(selectRecipe).ingredients;
     const valueOfStep = useMemo(() => 100 / steps.length, [steps]);
-    const deviceWidth = Dimensions.get('screen').width;
     const [currentStep, setCurrentStep] = useState(1);
     const [progress, setProgress] = useState(34);
     const [showIngredients, setShowIngredients] = useState(false);
-
-    const tap = Gesture.Tap()
-        .onStart((event) => {
-            if (event.x <= deviceWidth / 2) {
-                decrease()
-            } else {
-                increase()
-            }
-        })
-
 
     function increase() {
         if (progress < 100) {
@@ -58,7 +47,7 @@ export default function StepByStepModeScreen() {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{flex: 1, position: 'relative'}}>
             <Stack.Screen
                 options={{
                     headerShown: false
@@ -67,7 +56,7 @@ export default function StepByStepModeScreen() {
             <YStack paddingHorizontal={10} marginBottom={10} marginTop={Platform.OS === 'android' ? 10 : 0}>
                 <XStack justifyContent='space-between' marginBottom={10}>
                     <TouchableOpacity onPress={() => router.back()}>
-                        <Ionicons name="arrow-back" size={24} color="black" />
+                        <Ionicons name="arrow-back" size={24} color="black"/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowIngredients(true)}>
                         <H4 fontSize={18} color='green'>Ingredients ({ingredients.length})</H4>
@@ -78,18 +67,18 @@ export default function StepByStepModeScreen() {
                     <Progress.Indicator animation="bouncy"/>
                 </Progress>
             </YStack>
-            <GestureDetector gesture={tap}>
-                <ScrollView flex={1} paddingHorizontal={10} paddingVertical={20}>
-                    <H3 marginBottom={10}>{steps[currentStep - 1].title}</H3>
-                    {
-                        steps[currentStep - 1].image &&
-                        <Image source={{ uri: steps[currentStep - 1].image }} style={{ width: '100%', height: 250, borderRadius: 12, marginBottom: 10 }} />
-                    }
-                    <Paragraph marginTop={10} fontSize={18}>{steps[currentStep - 1].description}</Paragraph>
+            <ScrollView flex={1} paddingHorizontal={10} paddingVertical={20}>
+                <H3 marginBottom={10}>{steps[currentStep - 1].title}</H3>
+                {
+                    steps[currentStep - 1].image &&
+                    <Image source={{uri: steps[currentStep - 1].image}}
+                           style={{width: '100%', height: 250, borderRadius: 12, marginBottom: 10}}/>
+                }
+                <Paragraph marginTop={10} fontSize={18}>{steps[currentStep - 1].description}</Paragraph>
 
-                </ScrollView>
-            </GestureDetector>
-            <InformativeSheet open={showIngredients} setOpen={(val) => setShowIngredients(val)} close={() => setShowIngredients(false)}>
+            </ScrollView>
+            <InformativeSheet open={showIngredients} setOpen={(val) => setShowIngredients(val)}
+                              close={() => setShowIngredients(false)}>
                 {
                     ingredients.map((ingredient: Ingredient) => (
                         <XStack
@@ -102,11 +91,22 @@ export default function StepByStepModeScreen() {
                             borderBottomWidth={0.2}
                         >
                             <Paragraph fontSize={18}>{ingredient.product}</Paragraph>
-                            <Paragraph fontSize={18} fontWeight='900'>{ingredient.quantity} {ingredient.measure}</Paragraph>
+                            <Paragraph fontSize={18}
+                                       fontWeight='900'>{ingredient.quantity} {ingredient.measure}</Paragraph>
                         </XStack>
                     ))
                 }
             </InformativeSheet>
+            <XStack position='absolute' bottom={10} right={10} left={10} justifyContent={currentStep === 1 ? 'flex-end' : 'space-between'}>
+                {
+                    currentStep > 1 &&
+                    <Button onPress={decrease} backgroundColor='lightgreen'>Anterior</Button>
+                }
+                {
+                    currentStep < steps.length &&
+                    <Button onPress={increase} backgroundColor='lightgreen'>Siguiente</Button>
+                }
+            </XStack>
         </SafeAreaView>
     )
 }

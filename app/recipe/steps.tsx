@@ -6,7 +6,7 @@ import {
     Image,
     Input,
     Label,
-    Paragraph,
+    Paragraph, ScrollView,
     Square,
     Text,
     TextArea,
@@ -29,7 +29,7 @@ import {
     Step
 } from "../../store/slices/recipe/recipeSlice";
 import {useRef, useState} from "react";
-import {TouchableOpacity} from "react-native";
+import {KeyboardAvoidingView, Platform, TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
 import * as Picker from "expo-image-picker";
 
@@ -109,7 +109,8 @@ export default function StepsScreen() {
 
     return (
         <SafeAreaView edges={['bottom']} style={{flex: 1}}>
-            <YStack flex={1} paddingHorizontal={10} position='relative' paddingBottom={(createStep || typeof currentStepToEdit === 'number') ? 0 : 60}>
+            <YStack flex={1} paddingHorizontal={10} position='relative'
+                    paddingBottom={(createStep || typeof currentStepToEdit === 'number') ? 0 : 60}>
                 <Stack.Screen
                     options={{
                         title: 'Steps',
@@ -120,70 +121,74 @@ export default function StepsScreen() {
                 {
                     (createStep || typeof currentStepToEdit === 'number') &&
                     <Card elevation={3} backgroundColor='#fff' width='100%' marginVertical={10}>
-                        <Card.Header>
-                            <XStack justifyContent='space-between' alignItems='center'>
-                                <H4>{createStep ? 'New' : 'Edit'} Step</H4>
-                                <TouchableOpacity onPress={CancelNewIngredient}>
-                                    <Ionicons name="close-circle-outline" size={24} color="red"/>
-                                </TouchableOpacity>
-                            </XStack>
-                        </Card.Header>
+                        <ScrollView>
+                            <Card.Header>
+                                <XStack justifyContent='space-between' alignItems='center'>
+                                    <H4>{createStep ? 'New' : 'Edit'} Step</H4>
+                                    <TouchableOpacity onPress={CancelNewIngredient}>
+                                        <Ionicons name="close-circle-outline" size={24} color="red"/>
+                                    </TouchableOpacity>
+                                </XStack>
+                            </Card.Header>
 
-                        <YStack paddingHorizontal={10}>
-                            <YStack position='relative' marginTop={30}>
-                                {image && <Image source={{uri: image}}
-                                                 style={{width: '100%', height: 200, borderRadius: 12}}/>}
-                                {!image && <Button height={200} onPress={pickImage}>Select a picture</Button>}
-                                {
-                                    image &&
-                                    <XStack justifyContent='flex-end' gap={10} position='absolute' top={10} right={10}>
-                                        <Button onPress={pickImage} size='$3' icon={ <Ionicons name="pencil" size={22} color="blue"/>}>
-                                            Edit
-                                        </Button>
-                                        <Button onPress={removeImage} size='$3' icon={ <Ionicons name="trash" size={22} color="red"/>}>
-                                            Remove
-                                        </Button>
-                                    </XStack>
-                                }
+                            <YStack paddingHorizontal={10}>
+                                <YStack position='relative'>
+                                    {image && <Image source={{uri: image}}
+                                                     style={{width: '100%', height: 200, borderRadius: 12}}/>}
+                                    {!image && <Button height={200} onPress={pickImage}>Select a picture</Button>}
+                                    {
+                                        image &&
+                                        <XStack justifyContent='flex-end' gap={10} position='absolute' top={10} right={10}>
+                                            <Button onPress={pickImage} size='$3'
+                                                    icon={<Ionicons name="pencil" size={22} color="blue"/>}>
+                                                Edit
+                                            </Button>
+                                            <Button onPress={removeImage} size='$3'
+                                                    icon={<Ionicons name="trash" size={22} color="red"/>}>
+                                                Remove
+                                            </Button>
+                                        </XStack>
+                                    }
+                                </YStack>
+
+                                <Label htmlFor="titleNewStep">Title</Label>
+                                <Controller
+                                    control={control}
+                                    rules={{required: true}}
+                                    render={({field: {onChange, onBlur, value}}) => (
+                                        <Input
+                                            id='titleNewStep'
+                                            size="$3"
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}/>
+                                    )}
+                                    name='title'
+                                />
+                                {errors.title && <Text>This is required.</Text>}
+
+                                <Label htmlFor="descriptionNewStep">Description</Label>
+                                <Controller
+                                    control={control}
+                                    rules={{required: true}}
+                                    render={({field: {onChange, onBlur, value}}) => (
+                                        <TextArea
+                                            id='descriptionNewStep'
+                                            size="$3"
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}/>
+                                    )}
+                                    name='description'
+                                />
+                                {errors.description && <Text>This is required.</Text>}
                             </YStack>
 
-                            <Label htmlFor="titleNewStep">Title</Label>
-                            <Controller
-                                control={control}
-                                rules={{required: true}}
-                                render={({field: {onChange, onBlur, value}}) => (
-                                    <Input
-                                        id='titleNewStep'
-                                        size="$3"
-                                        onBlur={onBlur}
-                                        onChangeText={onChange}
-                                        value={value}/>
-                                )}
-                                name='title'
-                            />
-                            {errors.title && <Text>This is required.</Text>}
-
-                            <Label htmlFor="descriptionNewStep">Description</Label>
-                            <Controller
-                                control={control}
-                                rules={{required: true}}
-                                render={({field: {onChange, onBlur, value}}) => (
-                                    <TextArea
-                                        id='descriptionNewStep'
-                                        size="$3"
-                                        onBlur={onBlur}
-                                        onChangeText={onChange}
-                                        value={value}/>
-                                )}
-                                name='description'
-                            />
-                            {errors.description && <Text>This is required.</Text>}
-                        </YStack>
-
-                        <Card.Footer padding={10}>
-                            <Button width='100%' onPress={createStep ? onSubmitCreate : onSubmitEdit}
-                                    backgroundColor='lightgreen'>Save Changes</Button>
-                        </Card.Footer>
+                            <Card.Footer padding={10}>
+                                <Button width='100%' onPress={createStep ? onSubmitCreate : onSubmitEdit}
+                                        backgroundColor='lightgreen'>Save Changes</Button>
+                            </Card.Footer>
+                        </ScrollView>
                     </Card>
                 }
 
@@ -194,7 +199,7 @@ export default function StepsScreen() {
                         estimatedItemSize={20}
                         renderItem={({item, index}) => {
                             return (
-                                <Accordion.Item value={item.id} key={item.id} marginVertical={5}>
+                                <Accordion.Item value={item.id!} key={item.id} marginVertical={5}>
                                     <Accordion.Trigger flexDirection="row" justifyContent="space-between">
                                         {({open}: { open: boolean }) => (
                                             <>
@@ -220,12 +225,14 @@ export default function StepsScreen() {
                                         }
                                         <Paragraph>{item.description}</Paragraph>
                                         <XStack gap={10} marginTop={10}>
-                                            <Button flex={1} onPress={() => onEditStep(index)} icon={ <Ionicons name="pencil" size={22} color="blue"/>}>
+                                            <Button flex={1} onPress={() => onEditStep(index)}
+                                                    icon={<Ionicons name="pencil" size={22} color="blue"/>}>
                                                 Edit
                                             </Button>
                                             <AlertDialog>
                                                 <AlertDialog.Trigger asChild>
-                                                    <Button flex={1} icon={ <Ionicons name="trash" size={22} color="red"/>}>
+                                                    <Button flex={1}
+                                                            icon={<Ionicons name="trash" size={22} color="red"/>}>
                                                         Remove
                                                     </Button>
                                                 </AlertDialog.Trigger>

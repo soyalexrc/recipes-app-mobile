@@ -75,6 +75,8 @@ export default function IngredientsScreen() {
         CancelNewIngredient()
     });
 
+    console.log(ingredients);
+
     const onPressNewIngredient = () => {
         setNewIngredient(true);
     }
@@ -152,6 +154,7 @@ export default function IngredientsScreen() {
                                                 id='amountForIngredient'
                                                 size="$3"
                                                 onBlur={onBlur}
+                                                keyboardType='phone-pad'
                                                 onChangeText={onChange}
                                                 value={value}/>
                                         )}

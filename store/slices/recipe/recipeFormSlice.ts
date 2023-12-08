@@ -22,8 +22,8 @@ const initialState: FullRecipe = {
     userId: null
 }
 
-export const recipeSlice = createSlice({
-    name: 'recipe',
+export const recipeFormSlice = createSlice({
+    name: 'recipeForm',
     // `createSlice` will infer the state type from the `initialState` argument
     initialState,
     reducers: {
@@ -83,7 +83,7 @@ export const recipeSlice = createSlice({
             state.category = category;
             state.userId = userId;
             state.id = id,
-            state.typeOfPortion = typeOfPortion
+                state.typeOfPortion = typeOfPortion
         },
         resetRecipe: () =>  initialState,
     }
@@ -99,9 +99,9 @@ export const {
     deleteStep,
     setRecipe,
     resetRecipe
-} = recipeSlice.actions
+} = recipeFormSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectRecipe = (state: RootState) => state.recipe
+export const selectRecipeForm = (state: RootState) => state.recipe
 
-export default recipeSlice.reducer
+export default recipeFormSlice.reducer

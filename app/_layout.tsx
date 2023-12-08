@@ -1,7 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {SplashScreen, Stack} from 'expo-router';
+import {SplashScreen, Stack, useNavigation} from 'expo-router';
 import {useEffect} from 'react';
 import {useColorScheme} from 'react-native';
 import {TamaguiProvider} from "tamagui";
@@ -10,11 +10,13 @@ import {initialWindowMetrics, SafeAreaProvider} from "react-native-safe-area-con
 import {Provider} from "react-redux";
 import {store} from "../store";
 import 'react-native-gesture-handler';
-import { useAppSelector } from '../store/hooks';
-import { selectI18n } from '../store/slices/i18n/i18nSlice';
-import { useInitializeApp } from '../utils/hooks';
-import { View, Text } from '../components/Themed';
+import {useAppSelector} from '../store/hooks';
+import {selectI18n} from '../store/slices/i18n/i18nSlice';
+import {useInitializeApp} from '../utils/hooks';
+import {View, Text} from '../components/Themed';
 import {getDictionary} from "../i18n";
+import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
+import {selectNavigation} from "../store/slices/navigation/navigationSlice";
 
 
 export {
@@ -65,11 +67,16 @@ function RootLayoutNav() {
     const {isReady} = useInitializeApp();
     const lng = useAppSelector(selectI18n).language;
 
-    if  (!isReady) {
+
+    if (!isReady) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Animated.View
+                entering={FadeIn}
+                exiting={FadeOut.delay(500)}
+                style={{flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center'}}
+            >
                 <Text>{getDictionary(lng).common.loading}</Text>
-            </View>
+            </Animated.View>
         )
     }
 
