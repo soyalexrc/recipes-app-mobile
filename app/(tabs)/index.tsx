@@ -10,6 +10,7 @@ import {selectNavigation, updateCurrent, updatePrev} from "../../store/slices/na
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useEffect} from "react";
 import * as SQLite from 'expo-sqlite';
+import {dropDatabase, getAllRecipes, openDatabase} from "../../utils/db";
 
 const sampleData = [
     {
@@ -46,38 +47,9 @@ export default function MyRecipesScreen() {
         checkDatabase()
     }, []);
 
-    function checkDatabase() {
-        try {
-            const db = SQLite.openDatabase('recipesApp.db');
-
-            db.transaction(tx => {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT)')
-            })
-
-            // db.transaction(tx => {
-            //     tx.executeSql('INSERT INTO recipes (title) values (?)', ['pan de jamon navideno'],
-            //         (txObj, resultSet) => {
-            //             console.log(txObj, resultSet);
-            //         },
-            //         (txObj, error) => {
-            //             console.log(error);
-            //         }
-            //     )
-            // }, (error) => {
-            //     console.log(error);
-            // })
-
-            db.transaction(tx => {
-                tx.executeSql('SELECT * FROM recipes', [],
-                    (txObj, {rows}) => {
-                        console.log('Data from database:', rows._array)
-                    }, (error) => {
-                        console.log(error)
-                    })
-            })
-        } catch (error) {
-            console.error('Error accessing the database:', error);
-        }
+    async function checkDatabase() {
+        const data = await getAllRecipes();
+        console.log(data);
     }
 
     return (
