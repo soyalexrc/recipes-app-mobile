@@ -7,6 +7,7 @@ import Colors from '../../constants/Colors';
 import { useAppSelector } from '../../store/hooks';
 import { selectI18n } from '../../store/slices/i18n/i18nSlice';
 import { getDictionary } from '../../i18n';
+import {HeaderSearch} from "../../components/recipes";
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -35,10 +36,18 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
+                    headerShown: false,
                     title: getDictionary(lng).myRecipes.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="newspaper-outline" color={color}/>,
+                }}
+            />
+            <Tabs.Screen
+                name="discovery"
+                options={{
+                    title: getDictionary(lng).discovery.pageTitle,
+                    tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
                     headerRight: () => (
-                        <Link href="/modal" asChild>
+                        <Link href="/recipe/(search)/global" asChild>
                             <Pressable>
                                 {({pressed}) => (
                                     <FontAwesome
@@ -51,13 +60,6 @@ export default function TabLayout() {
                             </Pressable>
                         </Link>
                     ),
-                }}
-            />
-            <Tabs.Screen
-                name="discovery"
-                options={{
-                    title: getDictionary(lng).discovery.pageTitle,
-                    tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
                 }}
             />
             <Tabs.Screen

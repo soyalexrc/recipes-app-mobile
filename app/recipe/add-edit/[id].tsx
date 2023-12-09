@@ -84,7 +84,7 @@ export default function AddEditRecipeScreen() {
     useEffect(() => {
         setTimeout(() => {
             setLoading(false);
-        }, 10)
+        }, 500)
     }, []);
 
     return (

@@ -1,4 +1,4 @@
-import {TouchableOpacity, View} from "react-native";
+import {RefreshControl, TouchableOpacity, View} from "react-native";
 import {Stack} from "expo-router/stack";
 import {Button, H3, H4, H5, H6, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
 import {HeaderBackButton} from "@react-navigation/elements";
@@ -12,6 +12,7 @@ import {setRecipe} from "../../../store/slices/recipe/recipeSlice";
 import {selectUser} from "../../../store/slices/user/userSlice";
 import {useShare} from "../../../utils/hooks";
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated";
+import {useState} from "react";
 
 const sampleData: FullRecipe = {
     id: '1',
@@ -91,6 +92,7 @@ export default function RecipeViewScreen() {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
     const {id} = useLocalSearchParams<{id: string}>();
+    const [loading, setLoading] = useState(false);
 
     useFocusEffect(() => {
         navigation.setOptions({
@@ -109,7 +111,21 @@ export default function RecipeViewScreen() {
                     headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()}/>)
                 }}
             />
-            <ScrollView flex={1} backgroundColor='#fff'>
+            <ScrollView
+                refreshControl={
+                <RefreshControl
+                    onRefresh={() => {
+                        setLoading(true)
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 2000)
+                    }}
+                    refreshing={loading}
+                />
+            }
+                flex={1}
+                backgroundColor='#fff'
+            >
                 <Animated.View entering={FadeIn.delay(200)}>
                     {/*    image*/}
                     <Image source={{uri: sampleData.image}} style={{width: '100%', height: 350}}/>
