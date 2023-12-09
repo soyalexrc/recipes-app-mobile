@@ -45,7 +45,10 @@
     "expo-localization": "~14.3.0",
     "@react-native-async-storage/async-storage": "1.18.2",
     "expo-sharing": "~11.5.0",
-    "react-native-reanimated": "~3.3.0"
+    "react-native-reanimated": "~3.3.0",
+    "expo-sqlite": "~11.3.3",
+    "expo-file-system": "~15.4.5",
+    "expo-asset": "~8.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
