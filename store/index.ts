@@ -5,6 +5,7 @@ import recipeReducer from './slices/recipe/recipeSlice';
 import recipeFormReducer from './slices/recipe/recipeFormSlice';
 import userReducer from './slices/user/userSlice';
 import i18nReducer from './slices/i18n/i18nSlice';
+import networkReducer from './slices/network/networkSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,7 +13,8 @@ export const store = configureStore({
         recipe: recipeReducer,
         user: userReducer,
         i18n: i18nReducer,
-        recipeForm: recipeFormReducer
+        recipeForm: recipeFormReducer,
+        network: networkReducer
     },
 })
 

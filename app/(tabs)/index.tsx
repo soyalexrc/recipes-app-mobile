@@ -13,6 +13,7 @@ import * as SQLite from 'expo-sqlite';
 import {dropDatabase, getAllRecipes, openDatabase} from "../../utils/db";
 import {FlashList} from "@shopify/flash-list";
 import {FullRecipe} from "../../constants/interfaces/recipe";
+import {selectNetwork} from "../../store/slices/network/networkSlice";
 
 const sampleData = [
     {
@@ -37,6 +38,7 @@ const sampleData = [
 export default function MyRecipesScreen() {
     const router = useRouter();
     const lng = useAppSelector(selectI18n).language;
+    const network = useAppSelector(selectNetwork);
     const {current, prev} = useAppSelector(selectNavigation);
     const dispatch = useAppDispatch();
     const [localRecipes, setLocalRecipes] = useState<FullRecipe[]>([])

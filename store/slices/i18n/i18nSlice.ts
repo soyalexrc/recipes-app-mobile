@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import * as Localization from 'expo-localization';
+import {RootState} from "../../index";
 
 function getLocale() {
     const locale =  Localization.locale.substring(0, 2);

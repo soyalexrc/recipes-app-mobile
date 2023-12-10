@@ -15,8 +15,6 @@ export const useInitializeApp = () => {
     if (language) {
       dispatch(changeLanguage(language));
     }
-    console.log(language);
-
     setIsReady(true);
 };
 

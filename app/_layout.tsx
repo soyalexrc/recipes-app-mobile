@@ -12,12 +12,12 @@ import {store} from "../store";
 import 'react-native-gesture-handler';
 import {useAppSelector} from '../store/hooks';
 import {selectI18n} from '../store/slices/i18n/i18nSlice';
-import {useInitializeApp} from '../utils/hooks';
+import {useInitializeApp, useNetInfo} from '../utils/hooks';
 import {View, Text} from '../components/Themed';
 import {getDictionary} from "../i18n";
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {selectNavigation} from "../store/slices/navigation/navigationSlice";
-
+import NetInfo from '@react-native-community/netinfo'
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -66,7 +66,7 @@ function RootLayoutNav() {
     const colorScheme = useColorScheme();
     const {isReady} = useInitializeApp();
     const lng = useAppSelector(selectI18n).language;
-
+    useNetInfo();
 
     if (!isReady) {
         return (
