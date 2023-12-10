@@ -20,6 +20,7 @@ export interface Step {
 }
 
 export interface FullRecipe {
+    localId: string;
     id?: string | null;
     userId?: string | null;
     category: string;

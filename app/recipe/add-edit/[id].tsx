@@ -3,7 +3,7 @@ import {Stack} from "expo-router/stack";
 import {AlertDialog, Button, ScrollView, Text, XStack, YStack} from "tamagui";
 import {HeaderBackButton} from "@react-navigation/elements";
 import {useRouter, useNavigation, useFocusEffect, useLocalSearchParams} from "expo-router";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {useForm} from "react-hook-form";
 import * as React from "react";
 import {useEffect, useState} from "react";
@@ -34,6 +34,8 @@ export default function AddEditRecipeScreen() {
     const recipeForm = useAppSelector(selectRecipeForm);
     const lng = useAppSelector(selectI18n).language;
     const router = useRouter();
+    const insets = useSafeAreaInsets();
+
     const [loading, setLoading] = useState(true);
     const {id} = useLocalSearchParams<{ id: string }>();
     const dispatch = useAppDispatch();
@@ -54,7 +56,7 @@ export default function AddEditRecipeScreen() {
         // case create new
         const newRecipe = {
             ...data,
-            id: nanoid(),
+            localId: nanoid(),
             userId: '2',
             steps: recipeForm.steps,
             ingredients: recipeForm.ingredients,
@@ -104,7 +106,7 @@ export default function AddEditRecipeScreen() {
     }, []);
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: insets.top}}>
             <Stack.Screen
                 options={{
                     title: getDictionary(lng).recipeForm.newRecipe,
@@ -112,46 +114,46 @@ export default function AddEditRecipeScreen() {
                     headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
                 }}
             />
-            {
-                loading &&
-                <Animated.View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-                               entering={FadeIn} exiting={FadeOut}>
-                    <Text>Loading...</Text>
-                </Animated.View>
-            }
+            <ScrollView backgroundColor='#fff' flex={1}>
+                <ImagePicker/>
+                <YStack padding={20}>
+                    {loading &&
+                        <Animated.View style={{flex: 1, height: 500, justifyContent: 'center', alignItems: 'center'}}
+                                       entering={FadeIn} exiting={FadeOut}>
+                            <Text>Loading...</Text>
+                        </Animated.View>
+                    }
+                    {
+                        !loading &&
+                        <Animated.View style={{flex: 1}} entering={FadeIn.springify().delay(200)}>
+                            <RecipeForm control={control} errors={errors} getValues={getValues}
+                                        setValue={setValue}/>
+                        </Animated.View>
 
-            {
-                !loading &&
-                <Animated.View style={{ flex: 1 }} entering={FadeIn.springify().delay(200)}>
-                    <ScrollView backgroundColor='#fff' flex={1}>
-                        <ImagePicker/>
-                        <YStack padding={20}>
-                            <RecipeForm control={control} errors={errors} getValues={getValues} setValue={setValue}/>
-                            <Button marginVertical={20} flex={1} onPress={() => router.push('/recipe/ingredients')}>
-                                <Text>
-                                    {getDictionary(lng).recipeForm.ingredientsLabel} ({recipeForm.ingredients.length})
-                                </Text>
-                            </Button>
-                            <Button marginBottom={20} flex={1} onPress={() => router.push('/recipe/steps')}>
-                                <Text>
-                                    {getDictionary(lng).recipeForm.stepsLabel} ({recipeForm.steps.length})
-                                </Text>
-                            </Button>
-                            {/*<RecipeSteps/>*/}
-                            <Button backgroundColor='lightgreen'
-                                    onPress={onSubmit}>{getDictionary(lng).recipeForm.submitLabel}</Button>
+                    }
+                    <Button marginVertical={20} flex={1} onPress={() => router.push('/recipe/ingredients')}>
+                        <Text>
+                            {getDictionary(lng).recipeForm.ingredientsLabel} ({recipeForm.ingredients.length})
+                        </Text>
+                    </Button>
+                    <Button marginBottom={20} flex={1} onPress={() => router.push('/recipe/steps')}>
+                        <Text>
+                            {getDictionary(lng).recipeForm.stepsLabel} ({recipeForm.steps.length})
+                        </Text>
+                    </Button>
+                    {/*<RecipeSteps/>*/}
+                    <Button backgroundColor='lightgreen'
+                            onPress={onSubmit}>{getDictionary(lng).recipeForm.submitLabel}</Button>
 
-                        </YStack>
-                    </ScrollView>
+                </YStack>
+            </ScrollView>
 
-                </Animated.View>
-            }
 
-        </SafeAreaView>
+        </View>
     )
 }
 
-function HeaderRight(props: { isOwner: boolean, id: number }) {
+function HeaderRight(props: { isOwner: boolean, id: string }) {
     const dispatch = useAppDispatch();
 
     if (!props.isOwner) {
