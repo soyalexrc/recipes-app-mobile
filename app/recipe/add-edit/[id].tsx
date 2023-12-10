@@ -16,6 +16,8 @@ import {getDictionary} from "../../../i18n";
 import {selectRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
 import {selectNavigation, updateCurrent, updatePrev} from "../../../store/slices/navigation/navigationSlice";
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
+import {createRecipe} from "../../../utils/db";
+import {nanoid} from "@reduxjs/toolkit";
 
 
 export interface AddRecipeFormData {
@@ -48,7 +50,16 @@ export default function AddEditRecipeScreen() {
 
     const {current, prev} = useAppSelector(selectNavigation);
 
-    const onSubmit = handleSubmit((data) => console.log(data))
+    const onSubmit = handleSubmit(async (data) => {
+        await createRecipe({
+            ...data,
+            id: nanoid(),
+            userId: '2',
+            steps: recipeForm.steps,
+            ingredients: recipeForm.ingredients,
+            image: recipeForm.image,
+        });
+    })
 
     useEffect(() => {
         dispatch(updatePrev(current))
@@ -88,7 +99,7 @@ export default function AddEditRecipeScreen() {
     }, []);
 
     return (
-        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
             <Stack.Screen
                 options={{
                     title: getDictionary(lng).recipeForm.newRecipe,

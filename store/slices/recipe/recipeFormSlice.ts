@@ -31,6 +31,9 @@ export const recipeFormSlice = createSlice({
         updateTitle: (state, action: PayloadAction<string>) => {
             state.title = action.payload
         },
+        updateImage: (state, action:PayloadAction<string>) => {
+            state.image = action.payload
+        },
         addNewIngredientToRecipe: (state, action: PayloadAction<Ingredient>) => {
             state.ingredients.push({
                 ...action.payload,
@@ -98,10 +101,11 @@ export const {
     editStep,
     deleteStep,
     setRecipe,
-    resetRecipe
+    resetRecipe,
+    updateImage,
 } = recipeFormSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectRecipeForm = (state: RootState) => state.recipe
+export const selectRecipeForm = (state: RootState) => state.recipeForm
 
 export default recipeFormSlice.reducer

@@ -26,13 +26,12 @@ import {FlashList} from "@shopify/flash-list";
 import {
     addNewIngredientToRecipe,
     deleteIngredientFromRecipe, editIngredient,
-    Ingredient,
-    selectRecipe
-} from "../../store/slices/recipe/recipeSlice";
+} from "../../store/slices/recipe/recipeFormSlice";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
-import {AddRecipeFormData} from "./add-recipe";
+import {selectRecipeForm} from "../../store/slices/recipe/recipeFormSlice";
+import {Ingredient} from "../../constants/interfaces/recipe";
 
 type TypeOfAction = 'edit' | 'create';
 
@@ -40,7 +39,7 @@ type TypeOfAction = 'edit' | 'create';
 export default function IngredientsScreen() {
     const router = useRouter();
     const navigation = useNavigation();
-    const ingredients = useAppSelector(selectRecipe).ingredients;
+    const ingredients = useAppSelector(selectRecipeForm).ingredients;
     const dispatch = useAppDispatch();
     const flashListRef = useRef<any>();
     const [currentIngredientToEdit, setCurrentIngredientToEdit] = useState<number | null>(null);
@@ -103,7 +102,8 @@ export default function IngredientsScreen() {
     }
 
     return (
-        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
+        <SafeAreaView  style={{flex: 1, backgroundColor: '#fff'}}>
+            <Button onPress={() => router.back()}>go back</Button>
             <YStack flex={1} position='relative'
                     paddingBottom={(newIngredient || typeof currentIngredientToEdit === 'number') ? 0 : 60}
                     paddingHorizontal={10}>

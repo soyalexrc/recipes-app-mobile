@@ -25,18 +25,18 @@ import {
     addNewStep,
     deleteStep,
     editStep,
-    selectRecipe,
-    Step
-} from "../../store/slices/recipe/recipeSlice";
+} from "../../store/slices/recipe/recipeFormSlice";
 import {useRef, useState} from "react";
 import {KeyboardAvoidingView, Platform, TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
 import * as Picker from "expo-image-picker";
+import {selectRecipeForm} from "../../store/slices/recipe/recipeFormSlice";
+import {Step} from "../../constants/interfaces/recipe";
 
 export default function StepsScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch()
-    const steps = useAppSelector(selectRecipe).steps;
+    const steps = useAppSelector(selectRecipeForm).steps;
     const [createStep, setCreateStep] = useState<boolean>(false);
     const [currentStepToEdit, setCurrentStepToEdit] = useState<number | null>(null);
     const flashListRef = useRef<any>();
@@ -108,7 +108,8 @@ export default function StepsScreen() {
     }
 
     return (
-        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
+        <SafeAreaView  style={{flex: 1, backgroundColor: '#fff'}}>
+            <Button onPress={() => router.back()}>go back</Button>
             <YStack flex={1} paddingHorizontal={10} position='relative'
                     paddingBottom={(createStep || typeof currentStepToEdit === 'number') ? 0 : 60}>
                 <Stack.Screen

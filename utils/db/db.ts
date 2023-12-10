@@ -29,12 +29,14 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
 }
 
 export async function createRecipe(recipe: FullRecipe): Promise<void> {
+    console.log(Object.keys(recipe).length);
+    console.log(recipe);
     try {
         const db = await openDatabase('recipesApp.db');
         return new Promise<void>((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    'INSERT INTO recipes (id, userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                    'INSERT INTO recipes (id, userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
                     [
                         recipe.id!,
                         recipe.userId!,
