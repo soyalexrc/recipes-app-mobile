@@ -32,6 +32,7 @@ import {TouchableOpacity} from "react-native";
 import {Controller, useForm} from "react-hook-form";
 import {selectRecipeForm} from "../../store/slices/recipe/recipeFormSlice";
 import {Ingredient} from "../../constants/interfaces/recipe";
+import {BasicCustomHeader} from "../../components/BasicCustomHeader";
 
 type TypeOfAction = 'edit' | 'create';
 
@@ -103,16 +104,12 @@ export default function IngredientsScreen() {
 
     return (
         <SafeAreaView  style={{flex: 1, backgroundColor: '#fff'}}>
-            <Button onPress={() => router.back()}>go back</Button>
             <YStack flex={1} position='relative'
                     paddingBottom={(newIngredient || typeof currentIngredientToEdit === 'number') ? 0 : 60}
                     paddingHorizontal={10}>
-                <Stack.Screen
-                    options={{
-                        title: 'Ingredients',
-                        headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()}/>)
-                    }}
-                />
+
+                <BasicCustomHeader title='Ingredientes' />
+
 
                 {
                     (newIngredient || typeof currentIngredientToEdit === 'number') &&

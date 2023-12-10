@@ -5,7 +5,7 @@ import {HeaderBackButton} from "@react-navigation/elements";
 import {useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as React from "react";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {FullRecipe, Step, Ingredient} from "../../../constants/interfaces/recipe";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {selectRecipe, setRecipe} from "../../../store/slices/recipe/recipeSlice";
@@ -89,6 +89,8 @@ const sampleData: FullRecipe = {
 
 export default function RecipeViewScreen() {
     const router = useRouter();
+    const {share} = useShare();
+    const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const params = useLocalSearchParams<{ local: string, id: string }>();
     const dispatch = useAppDispatch();
@@ -119,7 +121,7 @@ export default function RecipeViewScreen() {
             setLoading(false)
 
         } else {
-        //     handle online db
+            //     handle online db
             dispatch(setRecipe(sampleData))
             navigation.setOptions({
                 title: sampleData.title
@@ -131,7 +133,7 @@ export default function RecipeViewScreen() {
     }
 
     return (
-        <SafeAreaView edges={['bottom']} style={{flex: 1}}>
+        <View style={{flex: 1, paddingTop: insets.top, backgroundColor: '#fff'}}>
             <Stack.Screen
                 options={{
                     title: 'Recipe view',
@@ -148,133 +150,163 @@ export default function RecipeViewScreen() {
             }
             {
                 !loading && currentRecipe.id &&
-                <ScrollView
-                    refreshControl={
-                        <RefreshControl
-                            onRefresh={() => {
-                                setRefreshing(true)
-                                getRecipe();
-                                setTimeout(() => {
-                                    setRefreshing(false)
-                                }, 2000)
-                            }}
-                            refreshing={refreshing}
-                        />
-                    }
-                    flex={1}
-                    backgroundColor='#fff'
-                >
-                    <Animated.View entering={FadeIn.delay(200)}>
-                        {/*    image*/}
-                        <Image source={{uri: currentRecipe.image}} style={{width: '100%', height: 350}}/>
+                <>
+                    <XStack padding={10} justifyContent='space-between' alignItems='center'>
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <Ionicons name="arrow-back" size={24} color="black"/>
+                        </TouchableOpacity>
+                        {/*<H4 alignSelf='center'>Pan de jamon venezolano </H4>*/}
+                        <XStack gap={20}>
+                            <TouchableOpacity onPress={() => share('https://google.com')}>
+                                <Ionicons name="share-social" size={24} color="black"/>
+                            </TouchableOpacity>
+                            {
+                                sampleData.userId === user.id &&
+                                <TouchableOpacity onPress={() => router.push('/recipe/add-edit/2')}>
+                                    <Ionicons name="pencil" size={24} color="black"/>
+                                </TouchableOpacity>
+                            }
+                            {
+                                sampleData.userId !== user.id &&
+                                <TouchableOpacity>
+                                    <Ionicons name="heart-outline" size={24} color="black"/>
+                                </TouchableOpacity>
+                            }
+                        </XStack>
+
+                    </XStack>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                onRefresh={() => {
+                                    setRefreshing(true)
+                                    getRecipe();
+                                    setTimeout(() => {
+                                        setRefreshing(false)
+                                    }, 2000)
+                                }}
+                                refreshing={refreshing}
+                            />
+                        }
+                        flex={1}
+                        backgroundColor='#fff'
+                    >
+                        <Animated.View entering={FadeIn.delay(200)}>
+                            {/*    image*/}
+                            <Image source={{uri: currentRecipe.image}} style={{width: '100%', height: 350}}/>
 
 
-                        {/*  info  */}
-                        <YStack padding={10} gap={10}>
-                            <XStack alignItems='center' gap={10}>
-                                <AntDesign name="like2" size={20} color="black"/>
-                                <XStack gap={5}>
-                                    <Paragraph fontWeight='900'>96 people</Paragraph>
-                                    <Paragraph>like this</Paragraph>
+                            {/*  info  */}
+                            <YStack padding={10} gap={10}>
+                                <XStack alignItems='center' gap={10}>
+                                    <AntDesign name="like2" size={20} color="black"/>
+                                    <XStack gap={5}>
+                                        <Paragraph fontWeight='900'>96 people</Paragraph>
+                                        <Paragraph>like this</Paragraph>
+                                    </XStack>
                                 </XStack>
-                            </XStack>
 
-                            <XStack gap={10}>
-                                <AntDesign name="clockcircleo" size={20} color="black"/>
-                                <XStack gap={2}>
-                                    <Paragraph>ready in </Paragraph>
-                                    <Paragraph fontWeight='900'>under {currentRecipe.estimatedTime}</Paragraph>
+                                <XStack gap={10}>
+                                    <AntDesign name="clockcircleo" size={20} color="black"/>
+                                    <XStack gap={2}>
+                                        <Paragraph>ready in </Paragraph>
+                                        <Paragraph fontWeight='900'>under {currentRecipe.estimatedTime}</Paragraph>
 
+                                    </XStack>
                                 </XStack>
-                            </XStack>
-                        </YStack>
-
-                        {/* ingredients */}
-
-                        <YStack padding={10}>
-                            <H4>Ingredients for</H4>
-                            <Paragraph
-                                fontSize={16}>{currentRecipe.amountOfPortions} {`${currentRecipe.typeOfPortion}${Number(currentRecipe.amountOfPortions) > 1 && 's'}`}</Paragraph>
-
-                            <YStack marginVertical={20}>
-                                {
-                                    currentRecipe.ingredients.map((ingredient: Ingredient) => (
-                                        <XStack
-                                            justifyContent='space-between'
-                                            alignItems='center'
-                                            padding={5}
-                                            key={ingredient.id}
-                                            borderBottomColor='black'
-                                            borderBottomWidth={0.2}
-                                        >
-                                            <Paragraph>{ingredient.product}</Paragraph>
-                                            <Paragraph
-                                                fontWeight='900'>{ingredient.quantity} {ingredient.measure}</Paragraph>
-                                        </XStack>
-                                    ))
-                                }
-                            </YStack>
-                        </YStack>
-
-                        {/*    Nutrition information*/}
-                        <YStack padding={10}>
-                            <H4>Nutrition information</H4>
-                            <YStack backgroundColor='lightgray' height={100} justifyContent='center' alignItems='center'>
-                                <Paragraph>Under development...</Paragraph>
-                            </YStack>
-                        </YStack>
-
-                        {/* Tips or comments */}
-                        <YStack padding={10}>
-                            <H4>Tips / Comments</H4>
-                            <YStack backgroundColor='lightgray' height={100} justifyContent='center' alignItems='center'>
-                                <Paragraph>Under development...</Paragraph>
-                            </YStack>
-                        </YStack>
-
-                        {/*    Preparation*/}
-
-                        <YStack paddingHorizontal={10} paddingVertical={20} backgroundColor='#f2f2f2'>
-                            <H4>Preparation</H4>
-                            <Button
-                                marginVertical={10}
-                                iconAfter={<Ionicons name="play" size={20} color="black"/>}
-                                backgroundColor='lightblue'
-                                onPress={() => router.push('/recipe/step-by-step-mode')}
-                            >
-                                Step-by-step mode
-                            </Button>
-
-                            <YStack marginVertical={10}>
-                                {
-                                    currentRecipe.steps.map((step: Step, index: number) => (
-                                        <XStack gap={10} key={step.id} backgroundColor='#fff' padding={10} marginBottom={10}
-                                                borderRadius={10}>
-                                            <H4>{index + 1}.</H4>
-                                            <YStack flex={1}>
-                                                <H4 fontSize={18} marginBottom={5}>{step.title}</H4>
-                                                {
-                                                    step.image &&
-                                                    <Image source={{uri: step.image}} style={{
-                                                        width: '100%',
-                                                        height: 200,
-                                                        borderRadius: 12,
-                                                        marginBottom: 10
-                                                    }}/>
-                                                }
-                                                <Paragraph>{step.description}</Paragraph>
-                                            </YStack>
-                                        </XStack>
-                                    ))
-                                }
                             </YStack>
 
-                        </YStack>
+                            {/* ingredients */}
 
-                    </Animated.View>
-                </ScrollView>
+                            <YStack padding={10}>
+                                <H4>Ingredients for</H4>
+                                <Paragraph
+                                    fontSize={16}>{currentRecipe.amountOfPortions} {`${currentRecipe.typeOfPortion}${Number(currentRecipe.amountOfPortions) > 1 && 's'}`}</Paragraph>
+
+                                <YStack marginVertical={20}>
+                                    {
+                                        currentRecipe.ingredients.map((ingredient: Ingredient) => (
+                                            <XStack
+                                                justifyContent='space-between'
+                                                alignItems='center'
+                                                padding={5}
+                                                key={ingredient.id}
+                                                borderBottomColor='black'
+                                                borderBottomWidth={0.2}
+                                            >
+                                                <Paragraph>{ingredient.product}</Paragraph>
+                                                <Paragraph
+                                                    fontWeight='900'>{ingredient.quantity} {ingredient.measure}</Paragraph>
+                                            </XStack>
+                                        ))
+                                    }
+                                </YStack>
+                            </YStack>
+
+                            {/*    Nutrition information*/}
+                            <YStack padding={10}>
+                                <H4>Nutrition information</H4>
+                                <YStack backgroundColor='lightgray' height={100} justifyContent='center'
+                                        alignItems='center'>
+                                    <Paragraph>Under development...</Paragraph>
+                                </YStack>
+                            </YStack>
+
+                            {/* Tips or comments */}
+                            <YStack padding={10}>
+                                <H4>Tips / Comments</H4>
+                                <YStack backgroundColor='lightgray' height={100} justifyContent='center'
+                                        alignItems='center'>
+                                    <Paragraph>Under development...</Paragraph>
+                                </YStack>
+                            </YStack>
+
+                            {/*    Preparation*/}
+
+                            <YStack paddingHorizontal={10} paddingVertical={20} backgroundColor='#f2f2f2'>
+                                <H4>Preparation</H4>
+                                <Button
+                                    marginVertical={10}
+                                    iconAfter={<Ionicons name="play" size={20} color="black"/>}
+                                    backgroundColor='lightblue'
+                                    onPress={() => router.push('/recipe/step-by-step-mode')}
+                                >
+                                    Step-by-step mode
+                                </Button>
+
+                                <YStack marginVertical={10}>
+                                    {
+                                        currentRecipe.steps.map((step: Step, index: number) => (
+                                            <XStack gap={10} key={step.id} backgroundColor='#fff' padding={10}
+                                                    marginBottom={10}
+                                                    borderRadius={10}>
+                                                <H4>{index + 1}.</H4>
+                                                <YStack flex={1}>
+                                                    <H4 fontSize={18} marginBottom={5}>{step.title}</H4>
+                                                    {
+                                                        step.image &&
+                                                        <Image source={{uri: step.image}} style={{
+                                                            width: '100%',
+                                                            height: 200,
+                                                            borderRadius: 12,
+                                                            marginBottom: 10
+                                                        }}/>
+                                                    }
+                                                    <Paragraph>{step.description}</Paragraph>
+                                                </YStack>
+                                            </XStack>
+                                        ))
+                                    }
+                                </YStack>
+
+                            </YStack>
+
+                        </Animated.View>
+                    </ScrollView>
+                </>
+
             }
-        </SafeAreaView>
+        </View>
     )
 }
 

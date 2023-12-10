@@ -84,7 +84,7 @@ export default function MyRecipesScreen() {
                                 <Image
                                     source={{uri: item.image,}}
                                     width='100%'
-                                    height={150}
+                                    height={280}
                                     style={{borderRadius: 10}}
                                 />
                                 <Text>{item.title}</Text>

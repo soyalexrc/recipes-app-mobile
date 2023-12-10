@@ -32,6 +32,7 @@ import {Controller, useForm} from "react-hook-form";
 import * as Picker from "expo-image-picker";
 import {selectRecipeForm} from "../../store/slices/recipe/recipeFormSlice";
 import {Step} from "../../constants/interfaces/recipe";
+import {BasicCustomHeader} from "../../components/BasicCustomHeader";
 
 export default function StepsScreen() {
     const router = useRouter();
@@ -109,15 +110,11 @@ export default function StepsScreen() {
 
     return (
         <SafeAreaView  style={{flex: 1, backgroundColor: '#fff'}}>
-            <Button onPress={() => router.back()}>go back</Button>
             <YStack flex={1} paddingHorizontal={10} position='relative'
                     paddingBottom={(createStep || typeof currentStepToEdit === 'number') ? 0 : 60}>
-                <Stack.Screen
-                    options={{
-                        title: 'Steps',
-                        headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()}/>),
-                    }}
-                />
+
+                <BasicCustomHeader title='Pasos a seguir' />
+
 
                 {
                     (createStep || typeof currentStepToEdit === 'number') &&

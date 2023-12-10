@@ -19,6 +19,7 @@ import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {createRecipe} from "../../../utils/db";
 import {nanoid} from "@reduxjs/toolkit";
 import {addOneRecipe} from "../../../store/slices/recipe/localRecipesSlice";
+import {BasicCustomHeader} from "../../../components/BasicCustomHeader";
 
 
 export interface AddRecipeFormData {
@@ -80,6 +81,7 @@ export default function AddEditRecipeScreen() {
                 title: getDictionary(lng).recipeForm.newRecipe
             })
         } else {
+            console.log('here');
             navigation.setOptions({
                 title: recipeForm.title
             })
@@ -114,6 +116,7 @@ export default function AddEditRecipeScreen() {
                     headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
                 }}
             />
+            <BasicCustomHeader title='Nueva receta' />
             <ScrollView backgroundColor='#fff' flex={1}>
                 <ImagePicker/>
                 <YStack padding={20}>
