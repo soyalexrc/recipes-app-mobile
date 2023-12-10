@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {RefreshControl, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Button, YStack, Text, ScrollView, XStack, Image} from "tamagui";
 import {Ionicons} from '@expo/vector-icons';
 import {GenericPreviewList} from "../../components/recipes";
@@ -14,6 +14,7 @@ import {dropDatabase, getAllRecipes, openDatabase} from "../../utils/db";
 import {FlashList} from "@shopify/flash-list";
 import {FullRecipe} from "../../constants/interfaces/recipe";
 import {selectNetwork} from "../../store/slices/network/networkSlice";
+import {selectLocalRecipes, setDataToList} from "../../store/slices/recipe/localRecipesSlice";
 
 const sampleData = [
     {
@@ -38,10 +39,11 @@ const sampleData = [
 export default function MyRecipesScreen() {
     const router = useRouter();
     const lng = useAppSelector(selectI18n).language;
-    const network = useAppSelector(selectNetwork);
+    const localRecipes = useAppSelector(selectLocalRecipes).list;
     const {current, prev} = useAppSelector(selectNavigation);
     const dispatch = useAppDispatch();
-    const [localRecipes, setLocalRecipes] = useState<FullRecipe[]>([])
+    const [loading, setLoading] = useState<boolean>(false);
+
     useFocusEffect(() => {
         dispatch(updatePrev(current))
         dispatch(updateCurrent('my-recipes'))
@@ -52,58 +54,56 @@ export default function MyRecipesScreen() {
     }, []);
 
     async function checkDatabase() {
+        setLoading(true);
         const data = await getAllRecipes();
-        setLocalRecipes(data);
+        dispatch(setDataToList(data));
+        setLoading(false);
     }
 
     return (
-        <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#fff'}}>
-            <YStack style={styles.container}>
-                <ScrollView f={1} w='100%' showsVerticalScrollIndicator={false}>
-                    <YStack p={10} height='100%'>
-                        <FlashList
-                            data={localRecipes}
-                            numColumns={2}
-                            estimatedItemSize={50}
-                            ItemSeparatorComponent={() => <View style={{height: 10}}/>}
-                            renderItem={({item, index}) => (
-                                <TouchableOpacity
-                                    onPress={() => router.push('/recipe/detalle/local/123')}
-                                    style={{ width: '100%'}}
-                                    key={item.id}>
-                                    <YStack paddingRight={index % 2 === 0 && 5} paddingLeft={index % 2 !== 0 && 5}
-                                            width={'100%'}>
-                                        <Image
-                                            source={{uri: item.image,}}
-                                            width='100%'
-                                            height={150}
-                                            style={{borderRadius: 10}}
-                                        />
-                                        <Text>{item.title}</Text>
-                                    </YStack>
-                                </TouchableOpacity>
-                            )}
+        <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#fff', position: 'relative'}}>
+            <YStack p={10} height='100%'>
+                <FlashList
+                    data={localRecipes}
+                    numColumns={2}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={loading}
+                            onRefresh={checkDatabase}
                         />
-                    </YStack>
-                    <YStack height={50}/>
-
-                </ScrollView>
-                <Button onPress={() => router.push('/recipe/add-edit/new')} backgroundColor='$background'
-                        icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
-                    {getDictionary(lng).common.addRecipe}
-                </Button>
+                    }
+                    estimatedItemSize={50}
+                    ItemSeparatorComponent={() => <View style={{height: 10}}/>}
+                    renderItem={({item, index}) => (
+                        <TouchableOpacity
+                            onPress={() => router.push(`/recipe/detalle/${item.id}?local=true`)}
+                            style={{width: '100%'}}
+                            key={item.id}>
+                            <YStack paddingRight={index % 2 === 0 && 5} paddingLeft={index % 2 !== 0 && 5}
+                                    width={'100%'}>
+                                <Image
+                                    source={{uri: item.image,}}
+                                    width='100%'
+                                    height={150}
+                                    style={{borderRadius: 10}}
+                                />
+                                <Text>{item.title}</Text>
+                            </YStack>
+                        </TouchableOpacity>
+                    )}
+                />
             </YStack>
+            <YStack height={50}/>
+
+            <Button onPress={() => router.push('/recipe/add-edit/new')} backgroundColor='$background'
+                    icon={<Ionicons name="add" size={24} color="black"/>} style={styles.fab}>
+                {getDictionary(lng).common.addRecipe}
+            </Button>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff'
-    },
     fab: {
         position: 'absolute',
         bottom: 20,

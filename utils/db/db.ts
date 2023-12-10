@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 import {Asset} from 'expo-asset';
-import {FullRecipe} from "../../constants/interfaces/recipe";
+import {FullRecipe, Ingredient, Step} from "../../constants/interfaces/recipe";
 
 export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.Database> {
     const db = SQLite.openDatabase(pathToDatabaseFile);
@@ -29,8 +29,6 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
 }
 
 export async function createRecipe(recipe: FullRecipe): Promise<void> {
-    console.log(Object.keys(recipe).length);
-    console.log(recipe);
     try {
         const db = await openDatabase('recipesApp.db');
         return new Promise<void>((resolve, reject) => {
@@ -178,6 +176,48 @@ export async function updateRecipe(recipeId: string, updatedData: Partial<FullRe
                         },
                         (_, error) => {
                             console.error('Error updating recipe:', error);
+                            reject(error);
+                        }
+                    );
+                },
+                (_, error) => {
+                    console.error('Transaction error:', error);
+                    reject(error);
+                }
+            );
+        });
+    } catch (error) {
+        console.error('Error accessing the database:', error);
+        throw error;
+    }
+}
+
+export async function getRecipeById(recipeId: string): Promise<FullRecipe | null> {
+    try {
+        const db = await openDatabase('recipesApp.db');
+
+        return new Promise<FullRecipe | null>((resolve, reject) => {
+            db.transaction(
+                tx => {
+                    tx.executeSql(
+                        'SELECT * FROM recipes WHERE id = ?;',
+                        [recipeId],
+                        (_, { rows }) => {
+                            const result: FullRecipe[] = rows._array;
+                            if (result.length > 0) {
+                                const singleRecipe = result[0];
+                                resolve({
+                                    ...singleRecipe,
+                                    ingredients: JSON.parse(singleRecipe.ingredients as any),
+                                    steps: JSON.parse(singleRecipe.steps as any)
+                                });
+                            } else {
+                                console.warn(`No recipe found with ID ${recipeId}.`);
+                                resolve(null);
+                            }
+                        },
+                        (_, error) => {
+                            console.error('Error reading recipe by ID:', error);
                             reject(error);
                         }
                     );

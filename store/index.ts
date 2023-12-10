@@ -6,6 +6,7 @@ import recipeFormReducer from './slices/recipe/recipeFormSlice';
 import userReducer from './slices/user/userSlice';
 import i18nReducer from './slices/i18n/i18nSlice';
 import networkReducer from './slices/network/networkSlice';
+import localRecipesReducer from './slices/recipe/localRecipesSlice';
 
 export const store = configureStore({
     reducer: {
@@ -14,7 +15,8 @@ export const store = configureStore({
         user: userReducer,
         i18n: i18nReducer,
         recipeForm: recipeFormReducer,
-        network: networkReducer
+        network: networkReducer,
+        localRecipes: localRecipesReducer
     },
 })
 

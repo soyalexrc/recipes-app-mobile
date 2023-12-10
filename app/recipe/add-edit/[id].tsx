@@ -18,6 +18,7 @@ import {selectNavigation, updateCurrent, updatePrev} from "../../../store/slices
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {createRecipe} from "../../../utils/db";
 import {nanoid} from "@reduxjs/toolkit";
+import {addOneRecipe} from "../../../store/slices/recipe/localRecipesSlice";
 
 
 export interface AddRecipeFormData {
@@ -38,7 +39,6 @@ export default function AddEditRecipeScreen() {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const {
-        register,
         setValue,
         control,
         handleSubmit,
@@ -51,14 +51,19 @@ export default function AddEditRecipeScreen() {
     const {current, prev} = useAppSelector(selectNavigation);
 
     const onSubmit = handleSubmit(async (data) => {
-        await createRecipe({
+        // case create new
+        const newRecipe = {
             ...data,
             id: nanoid(),
             userId: '2',
             steps: recipeForm.steps,
             ingredients: recipeForm.ingredients,
             image: recipeForm.image,
-        });
+        }
+        await createRecipe(newRecipe);
+
+        dispatch(addOneRecipe(newRecipe));
+        router.back();
     })
 
     useEffect(() => {
