@@ -16,9 +16,9 @@ import {getDictionary} from "../../../i18n";
 import {resetRecipeForm, selectRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
 import {selectNavigation, updateCurrent, updatePrev} from "../../../store/slices/navigation/navigationSlice";
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
-import {createRecipe, updateRecipe} from "../../../utils/db";
+import {createRecipe, deleteRecipeById, updateRecipe} from "../../../utils/db";
 import {nanoid} from "@reduxjs/toolkit";
-import {addOneRecipe, editLocalRecipe} from "../../../store/slices/recipe/localRecipesSlice";
+import {addOneRecipe, deleteLocalRecipeById, editLocalRecipe} from "../../../store/slices/recipe/localRecipesSlice";
 import {BasicCustomHeader} from "../../../components/BasicCustomHeader";
 
 
@@ -100,6 +100,15 @@ export default function AddEditRecipeScreen() {
 
     })
 
+    async function deleteRecipe(id: string | number) {
+        const deletedRecipe = await deleteRecipeById(id);
+
+        if (deletedRecipe) {
+            dispatch(deleteLocalRecipeById(id));
+            router.replace('/(tabs)');
+        }
+    }
+
     useEffect(() => {
         dispatch(updatePrev(current))
         dispatch(updateCurrent('add-edit'))
@@ -112,7 +121,6 @@ export default function AddEditRecipeScreen() {
                 title: getDictionary(lng).recipeForm.newRecipe
             })
         } else {
-            console.log(recipeForm);
             navigation.setOptions({
                 title: recipeForm.title
             })
@@ -140,19 +148,10 @@ export default function AddEditRecipeScreen() {
 
     return (
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: insets.top}}>
-            <Stack.Screen
-                options={{
-                    title: getDictionary(lng).recipeForm.newRecipe,
-                    headerRight: props => <HeaderRight id={id} isOwner={id === recipeForm.userId}/>,
-                    headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
-                }}
-            />
             <BasicCustomHeader title={id === 'new' ? 'Nueva receta' : getValues('title')}>
                 {
                     id !== 'new' &&
-                    <TouchableOpacity>
-                        <Ionicons name="trash" size={24} color="red" />
-                    </TouchableOpacity>
+                    <DeleteButton action={() => deleteRecipe(id)} />
                 }
             </BasicCustomHeader>
             <ScrollView backgroundColor='#fff' flex={1}>
@@ -194,13 +193,7 @@ export default function AddEditRecipeScreen() {
     )
 }
 
-function HeaderRight(props: { isOwner: boolean, id: string | number }) {
-    const dispatch = useAppDispatch();
-
-    if (!props.isOwner) {
-        return;
-    }
-
+function DeleteButton(props: { action: () => void }) {
     return (
         <AlertDialog>
             <AlertDialog.Trigger asChild>
@@ -250,7 +243,7 @@ function HeaderRight(props: { isOwner: boolean, id: string | number }) {
                             </AlertDialog.Cancel>
                             <AlertDialog.Action asChild>
                                 <Button
-                                    onPress={() => dispatch(deleteStep(props.id))}
+                                    onPress={props.action}
                                     theme="active">Accept</Button>
                             </AlertDialog.Action>
                         </XStack>

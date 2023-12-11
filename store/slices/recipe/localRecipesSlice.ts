@@ -26,6 +26,10 @@ export const localRecipesSlice = createSlice({
         editLocalRecipe: (state, action: PayloadAction<FullRecipe>) => {
             const indexRecipeToModify = state.list.findIndex(r => r.id === action.payload.id);
             state.list.splice(indexRecipeToModify, 1, action.payload);
+        },
+        deleteLocalRecipeById: (state, action: PayloadAction<string | number>) => {
+            const index = state.list.findIndex(r => r.id === action.payload);
+            state.list.splice(index, 1);
         }
     }
 });
@@ -33,7 +37,7 @@ export const localRecipesSlice = createSlice({
 export const {
     setDataToList,
     addOneRecipe,
-    removeOneRecipe,
+    deleteLocalRecipeById,
     editLocalRecipe
 } = localRecipesSlice.actions
 

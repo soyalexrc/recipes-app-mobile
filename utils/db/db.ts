@@ -33,7 +33,7 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
 export async function createRecipe(recipe: FullRecipe): Promise<number | undefined> {
     try {
         const db = await openDatabase('recipesApp.db');
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<number | undefined>((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
                     'INSERT INTO recipes (userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
@@ -222,6 +222,43 @@ export async function getRecipeById(recipeId: string): Promise<FullRecipe | null
                         },
                         (_, error) => {
                             console.error('Error reading recipe by ID:', error);
+                            reject(error);
+                        }
+                    );
+                },
+                (_, error) => {
+                    console.error('Transaction error:', error);
+                    reject(error);
+                }
+            );
+        });
+    } catch (error) {
+        console.error('Error accessing the database:', error);
+        throw error;
+    }
+}
+
+export async function deleteRecipeById(recipeId: string | number): Promise<boolean> {
+    try {
+        const db = await openDatabase('recipesApp.db');
+
+        return new Promise<boolean>((resolve, reject) => {
+            db.transaction(
+                tx => {
+                    tx.executeSql(
+                        'DELETE FROM recipes WHERE id = ?;',
+                        [recipeId],
+                        (_, { rowsAffected }) => {
+                            if (rowsAffected > 0) {
+                                console.log(`Recipe with ID ${recipeId} deleted successfully.`);
+                                resolve(true);
+                            } else {
+                                console.warn(`No recipe with ID ${recipeId} found for deletion.`);
+                                reject(new Error(`Recipe not found for deletion.`));
+                            }
+                        },
+                        (_, error) => {
+                            console.error('Error deleting recipe:', error);
                             reject(error);
                         }
                     );
