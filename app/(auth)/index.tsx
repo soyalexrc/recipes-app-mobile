@@ -1,26 +1,35 @@
-import {Stack} from "expo-router/stack";
-import { Text, View} from "react-native";
-import {Link, useFocusEffect, useRouter} from "expo-router";
+import {useRouter} from "expo-router";
+import {Circle, Input, ScrollView, XStack, YStack, Text, Button} from "tamagui";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {LoginForm, RegisterForm} from "../../components/auth";
 import {useState} from "react";
+
+type FormType = 'logIn' | 'signIn'
 
 export default function Login() {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
+    const [formType, setFormType] = useState<FormType>('signIn')
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Stack.Screen
-                options={{
-                    headerStyle: { backgroundColor: '#f4511e' },
-                    headerTintColor: '#fff',
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                }}
-            />
-            <Text>Login page</Text>
-            <Link href='/(auth)/register' replace={false}>Register Screen</Link>
-            <Link href='/(auth)/forgot-password' replace={false}>Forgot password Screen</Link>
-            <Link href='/(tabs)' replace={true}>Tabs Screen</Link>
-        </View>
+        <YStack justifyContent='center' paddingTop={insets.top} backgroundColor='#fff' flex={1}>
+            <YStack>
+                <ScrollView>
+                    <XStack justifyContent='center'>
+                        <Circle bordered borderColor='#000000' width={100} height={100}>
+                            <Text>Logo here</Text>
+                        </Circle>
+                    </XStack>
+                    {
+                        formType === 'logIn'
+                            ? <LoginForm changeFormType={() => setFormType('signIn')}/>
+                            : <RegisterForm changeFormType={() => setFormType('logIn')}/>}
+
+
+                </ScrollView>
+            </YStack>
+        </YStack>
     )
 }
+
+
