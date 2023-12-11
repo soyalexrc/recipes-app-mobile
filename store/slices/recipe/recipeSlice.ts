@@ -19,7 +19,8 @@ const initialState: FullRecipe = {
     typeOfPortion: '',
     category: '',
     id: null,
-    userId: null
+    userId: null,
+    localId: '',
 }
 
 export const recipeSlice = createSlice({

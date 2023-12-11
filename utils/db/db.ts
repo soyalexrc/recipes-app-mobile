@@ -2,6 +2,7 @@ import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 import {Asset} from 'expo-asset';
 import {FullRecipe, Ingredient, Step} from "../../constants/interfaces/recipe";
+import {updateImage} from "../../store/slices/recipe/recipeFormSlice";
 
 export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.Database> {
     const db = SQLite.openDatabase(pathToDatabaseFile);
@@ -11,7 +12,8 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
         tx.executeSql(`
             CREATE TABLE IF NOT EXISTS recipes
             (
-                id               TEXT PRIMARY KEY,
+                id               INTEGER PRIMARY KEY AUTOINCREMENT ,
+                localId          TEXT,
                 userId           TEXT,
                 title            TEXT,
                 category         TEXT,
@@ -28,15 +30,14 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
     return db
 }
 
-export async function createRecipe(recipe: FullRecipe): Promise<void> {
+export async function createRecipe(recipe: FullRecipe): Promise<number | undefined> {
     try {
         const db = await openDatabase('recipesApp.db');
         return new Promise<void>((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    'INSERT INTO recipes (id, userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                    'INSERT INTO recipes (userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
                     [
-                        recipe.id!,
                         recipe.userId!,
                         recipe.title,
                         recipe.category,
@@ -50,7 +51,7 @@ export async function createRecipe(recipe: FullRecipe): Promise<void> {
                     ],
                     (_, results) => {
                         console.log('Recipe inserted with ID:', results.insertId);
-                        resolve();
+                        resolve(results.insertId);
                     },
                     (_, error) => {
                         reject(error);
@@ -148,23 +149,26 @@ export async function dropDatabase(databaseName: string): Promise<void> {
     }
 }
 
-export async function updateRecipe(recipeId: string, updatedData: Partial<FullRecipe>): Promise<void> {
+export async function updateRecipe(recipeId: string, updatedData: FullRecipe): Promise<void> {
     try {
         const db = await openDatabase('recipesApp.db');
+
 
         return new Promise<void>((resolve, reject) => {
             db.transaction(
                 tx => {
                     // Update the "recipes" table with the provided data
-                    const updateStatement = Object.keys(updatedData)
-                        .map(key => `${key} = ?`)
-                        .join(', ');
+                    const updateFields = Object.keys(updatedData).filter(field => field !== 'id');
+                    const updateStatement = updateFields.map(key => `${key} = ?`).join(', ');
 
-                    const updateValues = JSON.stringify(Object.values(updatedData));
+                    const updateValues = updateFields.map(key => updatedData[key]);
+                    // Ensure that recipeId is the last parameter
+                    updateValues.push(recipeId);
+
 
                     tx.executeSql(
                         `UPDATE recipes SET ${updateStatement} WHERE id = ?;`,
-                        [...updateValues, recipeId],
+                        updateValues,
                         (_, { rowsAffected }) => {
                             if (rowsAffected > 0) {
                                 console.log(`Recipe with ID ${recipeId} updated successfully.`);

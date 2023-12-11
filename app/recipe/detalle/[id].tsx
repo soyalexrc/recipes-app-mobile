@@ -1,6 +1,6 @@
 import {RefreshControl, TouchableOpacity, View} from "react-native";
 import {Stack} from "expo-router/stack";
-import {Button, H3, H4, H5, H6, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
+import {Button, H1, H2, H3, H4, H5, H6, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
 import {HeaderBackButton} from "@react-navigation/elements";
 import {useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {AntDesign, Ionicons} from "@expo/vector-icons";
@@ -14,6 +14,8 @@ import {useShare} from "../../../utils/hooks";
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated";
 import {useEffect, useState} from "react";
 import {getRecipeById} from "../../../utils/db";
+import {selectRecipeForm, setRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
+import {nanoid} from "@reduxjs/toolkit";
 
 const sampleData: FullRecipe = {
     id: '1',
@@ -100,7 +102,6 @@ export default function RecipeViewScreen() {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
-
     useEffect(() => {
         getRecipe();
     }, []);
@@ -112,6 +113,7 @@ export default function RecipeViewScreen() {
 
         if (isLocalRecipe) {
             const recipe = await getRecipeById(id);
+            console.log(id);
             if (recipe) {
                 dispatch(setRecipe(recipe));
                 navigation.setOptions({
@@ -128,19 +130,17 @@ export default function RecipeViewScreen() {
             })
             setLoading(false)
         }
+    }
 
-
+    function goToEdit() {
+        dispatch(setRecipeForm(currentRecipe));
+        router.push(`/recipe/add-edit/${id}`)
     }
 
     return (
         <View style={{flex: 1, paddingTop: insets.top, backgroundColor: '#fff'}}>
             <Stack.Screen
-                options={{
-                    title: 'Recipe view',
-                    headerRight: props => (
-                        <HeaderRight isOwner={sampleData.userId === user.id} {...props} />),
-                    headerLeft: props => (<HeaderBackButton {...props} onPress={() => router.back()}/>)
-                }}
+                options={{title: 'Recipe view'}}
             />
             {
                 loading &&
@@ -151,7 +151,7 @@ export default function RecipeViewScreen() {
             {
                 !loading && currentRecipe.id &&
                 <>
-                    <XStack padding={10} justifyContent='space-between' alignItems='center'>
+                    <XStack padding={15} justifyContent='space-between' alignItems='center'>
                         <TouchableOpacity onPress={() => router.back()}>
                             <Ionicons name="arrow-back" size={24} color="black"/>
                         </TouchableOpacity>
@@ -162,7 +162,7 @@ export default function RecipeViewScreen() {
                             </TouchableOpacity>
                             {
                                 sampleData.userId === user.id &&
-                                <TouchableOpacity onPress={() => router.push('/recipe/add-edit/2')}>
+                                <TouchableOpacity onPress={goToEdit}>
                                     <Ionicons name="pencil" size={24} color="black"/>
                                 </TouchableOpacity>
                             }
@@ -192,6 +192,13 @@ export default function RecipeViewScreen() {
                         backgroundColor='#fff'
                     >
                         <Animated.View entering={FadeIn.delay(200)}>
+                            <YStack padding={10}>
+                                <H2>{currentRecipe.title}</H2>
+                                <Paragraph>
+                                    {currentRecipe.description}
+                                </Paragraph>
+                            </YStack>
+
                             {/*    image*/}
                             <Image source={{uri: currentRecipe.image}} style={{width: '100%', height: 350}}/>
 

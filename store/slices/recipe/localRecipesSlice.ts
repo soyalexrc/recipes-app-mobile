@@ -22,6 +22,10 @@ export const localRecipesSlice = createSlice({
             const id = action.payload;
             const index = state.list.findIndex(r => r.id === id);
             state.list.splice(index, 1);
+        },
+        editLocalRecipe: (state, action: PayloadAction<FullRecipe>) => {
+            const indexRecipeToModify = state.list.findIndex(r => r.id === action.payload.id);
+            state.list.splice(indexRecipeToModify, 1, action.payload);
         }
     }
 });
@@ -29,7 +33,8 @@ export const localRecipesSlice = createSlice({
 export const {
     setDataToList,
     addOneRecipe,
-    removeOneRecipe
+    removeOneRecipe,
+    editLocalRecipe
 } = localRecipesSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type

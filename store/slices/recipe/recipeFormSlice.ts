@@ -19,7 +19,8 @@ const initialState: FullRecipe = {
     typeOfPortion: '',
     category: '',
     id: null,
-    userId: null
+    userId: null,
+    localId: '',
 }
 
 export const recipeFormSlice = createSlice({
@@ -61,7 +62,8 @@ export const recipeFormSlice = createSlice({
             console.log(action.payload)
             state.steps.splice(action.payload, 1);
         },
-        setRecipe: (state, action: PayloadAction<FullRecipe>) => {
+        setRecipeForm: (state, action: PayloadAction<FullRecipe>) => {
+            console.log('here')
             const {
                 amountOfPortions,
                 title,
@@ -88,7 +90,7 @@ export const recipeFormSlice = createSlice({
             state.id = id,
                 state.typeOfPortion = typeOfPortion
         },
-        resetRecipe: () =>  initialState,
+        resetRecipeForm: () =>  initialState,
     }
 })
 
@@ -100,8 +102,8 @@ export const {
     addNewStep,
     editStep,
     deleteStep,
-    setRecipe,
-    resetRecipe,
+    setRecipeForm,
+    resetRecipeForm,
     updateImage,
 } = recipeFormSlice.actions
 

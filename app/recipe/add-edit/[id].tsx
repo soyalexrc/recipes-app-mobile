@@ -8,17 +8,17 @@ import {useForm} from "react-hook-form";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {deleteStep, resetRecipe, selectRecipe} from "../../../store/slices/recipe/recipeSlice";
+import {deleteStep, resetRecipe, selectRecipe, setRecipe} from "../../../store/slices/recipe/recipeSlice";
 import {ImagePicker, RecipeForm} from "../../../components/recipes";
 import {Ionicons} from "@expo/vector-icons";
 import {selectI18n} from "../../../store/slices/i18n/i18nSlice";
 import {getDictionary} from "../../../i18n";
-import {selectRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
+import {resetRecipeForm, selectRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
 import {selectNavigation, updateCurrent, updatePrev} from "../../../store/slices/navigation/navigationSlice";
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
-import {createRecipe} from "../../../utils/db";
+import {createRecipe, updateRecipe} from "../../../utils/db";
 import {nanoid} from "@reduxjs/toolkit";
-import {addOneRecipe} from "../../../store/slices/recipe/localRecipesSlice";
+import {addOneRecipe, editLocalRecipe} from "../../../store/slices/recipe/localRecipesSlice";
 import {BasicCustomHeader} from "../../../components/BasicCustomHeader";
 
 
@@ -54,19 +54,50 @@ export default function AddEditRecipeScreen() {
     const {current, prev} = useAppSelector(selectNavigation);
 
     const onSubmit = handleSubmit(async (data) => {
-        // case create new
-        const newRecipe = {
-            ...data,
-            localId: nanoid(),
-            userId: '2',
-            steps: recipeForm.steps,
-            ingredients: recipeForm.ingredients,
-            image: recipeForm.image,
-        }
-        await createRecipe(newRecipe);
+        try {
+            if (id === 'new') {
+                // case create new
+                const newRecipe = {
+                    ...data,
+                    localId: nanoid(),
+                    userId: '2',
+                    steps: recipeForm.steps,
+                    ingredients: recipeForm.ingredients,
+                    image: recipeForm.image,
+                }
+                const newId = await createRecipe(newRecipe);
 
-        dispatch(addOneRecipe(newRecipe));
-        router.back();
+                dispatch(addOneRecipe({
+                    ...newRecipe,
+                    id: newId
+                }));
+                router.back();
+            } else {
+                // case create new
+                const editedRecipe = {
+                    ...data,
+                    id: recipeForm.id,
+                    localId: recipeForm.localId,
+                    userId: recipeForm.userId,
+                    steps: JSON.stringify(recipeForm.steps) as any,
+                    ingredients: JSON.stringify(recipeForm.ingredients) as any,
+                    image: recipeForm.image,
+                }
+                await updateRecipe(id, editedRecipe);
+
+                dispatch(editLocalRecipe(editedRecipe));
+                dispatch(setRecipe({
+                    ...editedRecipe,
+                    ingredients: JSON.parse(editedRecipe.ingredients),
+                    steps: JSON.parse(editedRecipe.steps)
+                }));
+                router.back();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
+
     })
 
     useEffect(() => {
@@ -75,13 +106,13 @@ export default function AddEditRecipeScreen() {
 
         if (id === 'new') {
             if (prev === 'my-recipes') {
-                dispatch(resetRecipe())
+                dispatch(resetRecipeForm())
             }
             navigation.setOptions({
                 title: getDictionary(lng).recipeForm.newRecipe
             })
         } else {
-            console.log('here');
+            console.log(recipeForm);
             navigation.setOptions({
                 title: recipeForm.title
             })
@@ -116,7 +147,14 @@ export default function AddEditRecipeScreen() {
                     headerLeft: props => <HeaderBackButton  {...props} onPress={() => router.back()}/>
                 }}
             />
-            <BasicCustomHeader title='Nueva receta' />
+            <BasicCustomHeader title={id === 'new' ? 'Nueva receta' : getValues('title')}>
+                {
+                    id !== 'new' &&
+                    <TouchableOpacity>
+                        <Ionicons name="trash" size={24} color="red" />
+                    </TouchableOpacity>
+                }
+            </BasicCustomHeader>
             <ScrollView backgroundColor='#fff' flex={1}>
                 <ImagePicker/>
                 <YStack padding={20}>
@@ -156,7 +194,7 @@ export default function AddEditRecipeScreen() {
     )
 }
 
-function HeaderRight(props: { isOwner: boolean, id: string }) {
+function HeaderRight(props: { isOwner: boolean, id: string | number }) {
     const dispatch = useAppDispatch();
 
     if (!props.isOwner) {

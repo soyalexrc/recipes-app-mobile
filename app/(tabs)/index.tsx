@@ -15,6 +15,8 @@ import {FlashList} from "@shopify/flash-list";
 import {FullRecipe} from "../../constants/interfaces/recipe";
 import {selectNetwork} from "../../store/slices/network/networkSlice";
 import {selectLocalRecipes, setDataToList} from "../../store/slices/recipe/localRecipesSlice";
+import {Simulate} from "react-dom/test-utils";
+import drop = Simulate.drop;
 
 const sampleData = [
     {
@@ -54,11 +56,14 @@ export default function MyRecipesScreen() {
     }, []);
 
     async function checkDatabase() {
+        // await dropDatabase('recipesApp.db');
         setLoading(true);
         const data = await getAllRecipes();
         dispatch(setDataToList(data));
         setLoading(false);
     }
+
+    console.log(localRecipes.map(r => r.id));
 
     return (
         <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#fff', position: 'relative'}}>

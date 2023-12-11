@@ -6,12 +6,12 @@ import * as React from 'react';
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {selectI18n} from "../../store/slices/i18n/i18nSlice";
 import {getDictionary} from "../../i18n";
-import {updateImage} from "../../store/slices/recipe/recipeFormSlice";
+import {selectRecipeForm, updateImage} from "../../store/slices/recipe/recipeFormSlice";
 
 export function ImagePicker() {
     const lng = useAppSelector(selectI18n).language;
     const dispatch = useAppDispatch();
-    const [image, setImage] = useState<any>(null);
+    const image = useAppSelector(selectRecipeForm).image
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -23,7 +23,6 @@ export function ImagePicker() {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
             dispatch(updateImage(result.assets[0].uri))
         }
     };
