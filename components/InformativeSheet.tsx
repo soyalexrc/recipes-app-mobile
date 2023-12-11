@@ -1,4 +1,4 @@
-import {Button, Sheet, XStack, YStack} from "tamagui";
+import {Button, H3, Sheet, XStack, YStack} from "tamagui";
 import {useState} from "react";
 import * as React from 'react';
 import {Ionicons} from "@expo/vector-icons";
@@ -6,11 +6,12 @@ import {Ionicons} from "@expo/vector-icons";
 interface Props {
     open: boolean,
     setOpen: (val: boolean) => void;
-    close: () => void;
     children: React.ReactNode
+    showHandle?: boolean;
+    title?: string;
 }
 
-export function InformativeSheet({open, setOpen, close, children}: Props) {
+export function InformativeSheet({open, setOpen, title, children, showHandle}: Props) {
 
 
     return (
@@ -30,13 +31,13 @@ export function InformativeSheet({open, setOpen, close, children}: Props) {
                 enterStyle={{opacity: 0}}
                 exitStyle={{opacity: 0}}
             />
+            {
+                showHandle &&
+                <Sheet.Handle />
+            }
             <Sheet.Frame padding="$4">
                 <Sheet.ScrollView>
-                    <XStack justifyContent='flex-end'>
-                        <Button iconAfter={<Ionicons name="close" size={24} color="black" />} onPress={close}>
-                            Close
-                        </Button>
-                    </XStack>
+                    <H3 textAlign='center' marginBottom={10}>{title}</H3>
                     {children}
                 </Sheet.ScrollView>
             </Sheet.Frame>

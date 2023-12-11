@@ -1,20 +1,24 @@
 import {Text, YStack, Progress, ScrollView, XStack, H4, Button, Image, H3, Paragraph} from "tamagui";
 import {Stack} from "expo-router/stack";
-import {Dimensions, Platform, TouchableOpacity} from "react-native";
-import {useMemo, useState} from "react";
+import {Dimensions, Platform, TouchableOpacity, View} from "react-native";
+import {useEffect, useMemo, useState} from "react";
 import {useAppSelector} from "../../store/hooks";
 import {selectRecipe} from "../../store/slices/recipe/recipeSlice";
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
 import * as React from "react";
 import {InformativeSheet} from "../../components";
 import {Ingredient} from "../../constants/interfaces/recipe";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
+import {selectI18n} from "../../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../../i18n";
 
 export default function StepByStepModeScreen() {
     const router = useRouter();
     const steps = useAppSelector(selectRecipe).steps;
+    const lng = useAppSelector(selectI18n).language;
+    const insets = useSafeAreaInsets();
     const ingredients = useAppSelector(selectRecipe).ingredients;
     const valueOfStep = useMemo(() => 100 / steps.length, [steps]);
     const [currentStep, setCurrentStep] = useState(1);
@@ -45,9 +49,18 @@ export default function StepByStepModeScreen() {
         }
     }
 
+    useEffect(() => {
+        if (steps.length === 1) {
+            setProgress(100)
+        }
+        if (steps.length === 0) {
+            setProgress(0)
+        }
+    }, []);
+
 
     return (
-        <SafeAreaView style={{flex: 1, position: 'relative'}}>
+        <View style={{flex: 1, position: 'relative', paddingTop: insets.top, backgroundColor: '#fff'}}>
             <Stack.Screen
                 options={{
                     headerShown: false
@@ -59,11 +72,12 @@ export default function StepByStepModeScreen() {
                         <Ionicons name="arrow-back" size={24} color="black"/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowIngredients(true)}>
-                        <H4 fontSize={18} color='green'>Ingredients ({ingredients.length})</H4>
+                        <H4 fontSize={18}
+                            color='green'>{getDictionary(lng).common.ingredients} ({ingredients.length})</H4>
                     </TouchableOpacity>
                 </XStack>
-                <H4 fontSize={18}>{currentStep} of {steps.length}</H4>
-                <Progress value={progress}>
+                <H4 fontSize={18}>{currentStep} {getDictionary(lng).common.of} {steps.length}</H4>
+                <Progress value={progress} backgroundColor='lightgray'>
                     <Progress.Indicator animation="bouncy"/>
                 </Progress>
             </YStack>
@@ -77,8 +91,8 @@ export default function StepByStepModeScreen() {
                 <Paragraph marginTop={10} fontSize={18}>{steps[currentStep - 1].description}</Paragraph>
 
             </ScrollView>
-            <InformativeSheet open={showIngredients} setOpen={(val) => setShowIngredients(val)}
-                              close={() => setShowIngredients(false)}>
+            <InformativeSheet showHandle open={showIngredients} setOpen={(val) => setShowIngredients(val)}
+                              title={getDictionary(lng).common.ingredients}>
                 {
                     ingredients.map((ingredient: Ingredient) => (
                         <XStack
@@ -97,7 +111,8 @@ export default function StepByStepModeScreen() {
                     ))
                 }
             </InformativeSheet>
-            <XStack position='absolute' bottom={10} right={10} left={10} justifyContent={currentStep === 1 ? 'flex-end' : 'space-between'}>
+            <XStack position='absolute' bottom={10} right={10} left={10}
+                    justifyContent={currentStep === 1 ? 'flex-end' : 'space-between'}>
                 {
                     currentStep > 1 &&
                     <Button onPress={decrease} backgroundColor='lightgreen'>Anterior</Button>
@@ -107,6 +122,6 @@ export default function StepByStepModeScreen() {
                     <Button onPress={increase} backgroundColor='lightgreen'>Siguiente</Button>
                 }
             </XStack>
-        </SafeAreaView>
+        </View>
     )
 }

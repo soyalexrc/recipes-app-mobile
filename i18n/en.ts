@@ -6,6 +6,9 @@ const en: Dictionary =  {
         back: 'Back',
         addRecipe: 'Add recipe',
         seeAll: 'See all',
+        underDevelopment: 'Under development',
+        ingredients: 'Ingredients',
+        of: 'of'
     },
     myRecipes: {
         pageTitle: "My Recipes",
@@ -38,6 +41,18 @@ const en: Dictionary =  {
         titleLabel: 'Title',
         typeOfPortionLabel: 'Type of portion',
         requiredField: 'This is required'
+    },
+    recipeDetail: {
+        people: 'people',
+        likeThis: 'like this',
+        person: 'person',
+        readyIn: 'ready in',
+        under: 'under',
+        ingredientsFor: 'Ingredients for',
+        nutritionInformation: 'Nutrition information',
+        tipsAndComments: 'Tips / Comments',
+        preparation: 'Preparation',
+        stepByStepMode: 'Step by step mode',
     }
 }
 

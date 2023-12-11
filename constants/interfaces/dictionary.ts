@@ -1,6 +1,7 @@
 export interface Dictionary {
     common: Common,
     myRecipes: MyRecipes,
+    recipeDetail: RecipeDetail,
     discovery: Discovery,
     community: Community,
     profile: Profile,
@@ -9,9 +10,12 @@ export interface Dictionary {
 
 interface Common {
     loading: string;
+    ingredients: string,
+    of: string,
     addRecipe: string;
     back: string;
     seeAll: string;
+    underDevelopment: string;
 }
 
 interface MyRecipes {
@@ -49,4 +53,17 @@ interface RecipeForm {
     stepsLabel: string;
     submitLabel: string;
     requiredField: string;
+}
+
+interface RecipeDetail {
+    people: string,
+    likeThis: string,
+    person: string,
+    readyIn: string,
+    under: string,
+    ingredientsFor: string,
+    nutritionInformation: string,
+    tipsAndComments: string,
+    preparation: string,
+    stepByStepMode: string,
 }

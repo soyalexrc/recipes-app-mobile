@@ -1,11 +1,10 @@
 import {RefreshControl, TouchableOpacity, View} from "react-native";
 import {Stack} from "expo-router/stack";
-import {Button, H1, H2, H3, H4, H5, H6, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
-import {HeaderBackButton} from "@react-navigation/elements";
-import {useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
+import {Button, H2, H4, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
+import { useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as React from "react";
-import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
+import { useSafeAreaInsets} from "react-native-safe-area-context";
 import {FullRecipe, Step, Ingredient} from "../../../constants/interfaces/recipe";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {selectRecipe, setRecipe} from "../../../store/slices/recipe/recipeSlice";
@@ -14,12 +13,15 @@ import {useShare} from "../../../utils/hooks";
 import Animated, {FadeIn, FadeOut} from "react-native-reanimated";
 import {useEffect, useState} from "react";
 import {getRecipeById} from "../../../utils/db";
-import {selectRecipeForm, setRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
-import {nanoid} from "@reduxjs/toolkit";
+import {setRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
+import sleep from "../../../utils/sleep";
+import {selectI18n} from "../../../store/slices/i18n/i18nSlice";
+import {getDictionary} from "../../../i18n";
 
 const sampleData: FullRecipe = {
     id: '1',
     userId: '2',
+    localId: '123123',
     title: 'Pan de jamon',
     category: 'Dinner',
     description: 'Tradicion venezolana en todo su esplendor',
@@ -97,30 +99,40 @@ export default function RecipeViewScreen() {
     const params = useLocalSearchParams<{ local: string, id: string }>();
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
+    const lng = useAppSelector(selectI18n).language;
     const currentRecipe = useAppSelector(selectRecipe);
     const {id} = useLocalSearchParams<{ id: string }>();
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
-        getRecipe();
+        getRecipe(true);
     }, []);
 
-    async function getRecipe() {
-        setLoading(true);
+    async function getRecipe(isFirstCall: boolean) {
+        if (isFirstCall) {
+            setLoading(true);
+        } else {
+            setRefreshing(true)
+        }
         const isLocalRecipe = JSON.parse(params.local);
+
+        await sleep(1000);
 
 
         if (isLocalRecipe) {
             const recipe = await getRecipeById(id);
-            console.log(id);
             if (recipe) {
                 dispatch(setRecipe(recipe));
                 navigation.setOptions({
                     title: sampleData.title
                 })
             }
-            setLoading(false)
+            if (isFirstCall) {
+                setLoading(false);
+            } else {
+                setRefreshing(false)
+            }
 
         } else {
             //     handle online db
@@ -128,7 +140,11 @@ export default function RecipeViewScreen() {
             navigation.setOptions({
                 title: sampleData.title
             })
-            setLoading(false)
+            if (isFirstCall) {
+                setLoading(false);
+            } else {
+                setRefreshing(false)
+            }
         }
     }
 
@@ -145,7 +161,7 @@ export default function RecipeViewScreen() {
             {
                 loading &&
                 <YStack flex={1} justifyContent='center' alignItems='center'>
-                    <Text>Loading...</Text>
+                    <Text>{getDictionary(lng).common.loading}...</Text>
                 </YStack>
             }
             {
@@ -179,11 +195,7 @@ export default function RecipeViewScreen() {
                         refreshControl={
                             <RefreshControl
                                 onRefresh={() => {
-                                    setRefreshing(true)
-                                    getRecipe();
-                                    setTimeout(() => {
-                                        setRefreshing(false)
-                                    }, 2000)
+                                    getRecipe(false);
                                 }}
                                 refreshing={refreshing}
                             />
@@ -208,17 +220,16 @@ export default function RecipeViewScreen() {
                                 <XStack alignItems='center' gap={10}>
                                     <AntDesign name="like2" size={20} color="black"/>
                                     <XStack gap={5}>
-                                        <Paragraph fontWeight='900'>96 people</Paragraph>
-                                        <Paragraph>like this</Paragraph>
+                                        <Paragraph fontWeight='900'>96 {getDictionary(lng).recipeDetail.people}</Paragraph>
+                                        <Paragraph>{getDictionary(lng).recipeDetail.likeThis}</Paragraph>
                                     </XStack>
                                 </XStack>
 
                                 <XStack gap={10}>
                                     <AntDesign name="clockcircleo" size={20} color="black"/>
                                     <XStack gap={2}>
-                                        <Paragraph>ready in </Paragraph>
-                                        <Paragraph fontWeight='900'>under {currentRecipe.estimatedTime}</Paragraph>
-
+                                        <Paragraph>{getDictionary(lng).recipeDetail.readyIn} </Paragraph>
+                                        <Paragraph fontWeight='900'>{getDictionary(lng).recipeDetail.under} {currentRecipe.estimatedTime}</Paragraph>
                                     </XStack>
                                 </XStack>
                             </YStack>
@@ -226,7 +237,7 @@ export default function RecipeViewScreen() {
                             {/* ingredients */}
 
                             <YStack padding={10}>
-                                <H4>Ingredients for</H4>
+                                <H4>{getDictionary(lng).recipeDetail.ingredientsFor}</H4>
                                 <Paragraph
                                     fontSize={16}>{currentRecipe.amountOfPortions} {`${currentRecipe.typeOfPortion}${Number(currentRecipe.amountOfPortions) > 1 && 's'}`}</Paragraph>
 
@@ -252,33 +263,33 @@ export default function RecipeViewScreen() {
 
                             {/*    Nutrition information*/}
                             <YStack padding={10}>
-                                <H4>Nutrition information</H4>
+                                <H4>{getDictionary(lng).recipeDetail.nutritionInformation}</H4>
                                 <YStack backgroundColor='lightgray' height={100} justifyContent='center'
                                         alignItems='center'>
-                                    <Paragraph>Under development...</Paragraph>
+                                    <Paragraph>{getDictionary(lng).common.underDevelopment}...</Paragraph>
                                 </YStack>
                             </YStack>
 
                             {/* Tips or comments */}
                             <YStack padding={10}>
-                                <H4>Tips / Comments</H4>
+                                <H4>{getDictionary(lng).recipeDetail.tipsAndComments}</H4>
                                 <YStack backgroundColor='lightgray' height={100} justifyContent='center'
                                         alignItems='center'>
-                                    <Paragraph>Under development...</Paragraph>
+                                    <Paragraph>{getDictionary(lng).common.underDevelopment}...</Paragraph>
                                 </YStack>
                             </YStack>
 
                             {/*    Preparation*/}
 
                             <YStack paddingHorizontal={10} paddingVertical={20} backgroundColor='#f2f2f2'>
-                                <H4>Preparation</H4>
+                                <H4>{getDictionary(lng).recipeDetail.preparation}</H4>
                                 <Button
                                     marginVertical={10}
                                     iconAfter={<Ionicons name="play" size={20} color="black"/>}
                                     backgroundColor='lightblue'
                                     onPress={() => router.push('/recipe/step-by-step-mode')}
                                 >
-                                    Step-by-step mode
+                                    {getDictionary(lng).recipeDetail.stepByStepMode}
                                 </Button>
 
                                 <YStack marginVertical={10}>

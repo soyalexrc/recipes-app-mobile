@@ -5,7 +5,10 @@ const es: Dictionary = {
         loading: 'Cargando',
         seeAll: 'Ver todos',
         back: 'Atras',
-        addRecipe: 'Agregar receta'
+        addRecipe: 'Agregar receta',
+        ingredients: 'Ingredientes',
+        of: 'de',
+        underDevelopment: 'Bajo desarrollo'
     },
     myRecipes: {
         pageTitle: 'Mis Recetas',
@@ -38,6 +41,18 @@ const es: Dictionary = {
         estimatedTimeLabel: 'Tiempo estimado',
         categoryLabel: 'Categoria',
         requiredField: 'Este campo es requerido'
+    },
+    recipeDetail: {
+        people: 'personas',
+        likeThis: 'les gusta esto',
+        person: 'persona',
+        readyIn: 'listo en',
+        under: 'menos de',
+        ingredientsFor: 'Ingredientes para',
+        nutritionInformation: 'Informacion nutricional',
+        tipsAndComments: 'Tips / Comentarios',
+        preparation: 'Preparacion',
+        stepByStepMode: 'Modo de paso a paso',
     }
 }
 
