@@ -36,14 +36,6 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    headerShown: false,
-                    title: getDictionary(lng).myRecipes.pageTitle,
-                    tabBarIcon: ({color}) => <TabBarIcon name="newspaper-outline" color={color}/>,
-                }}
-            />
-            <Tabs.Screen
-                name="discovery"
-                options={{
                     title: getDictionary(lng).discovery.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
                     headerRight: () => (
@@ -60,6 +52,14 @@ export default function TabLayout() {
                             </Pressable>
                         </Link>
                     ),
+                }}
+            />
+            <Tabs.Screen
+                name="my-recipes"
+                options={{
+                    headerShown: false,
+                    title: getDictionary(lng).myRecipes.pageTitle,
+                    tabBarIcon: ({color}) => <TabBarIcon name="newspaper-outline" color={color}/>,
                 }}
             />
             <Tabs.Screen

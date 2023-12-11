@@ -105,7 +105,7 @@ export default function AddEditRecipeScreen() {
 
         if (deletedRecipe) {
             dispatch(deleteLocalRecipeById(id));
-            router.replace('/(tabs)');
+            router.replace('/(tabs)/my-recipes');
         }
     }
 

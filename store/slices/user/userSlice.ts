@@ -3,14 +3,14 @@ import {RootState} from "../../index";
 import {User} from "../../../constants/interfaces/user";
 
 const initialState: User = {
-    name: 'Alex Rodriguez',
-    email: 'alexcarvajal2404@gmail.com',
-    likes: '2400',
-    recipes: '234',
-    tips: '112',
+    name: '',
+    email: '',
+    likes: 0,
+    recipes: 0,
+    tips: 0,
     image: '',
-    id: '2',
-    token: 'asd123klashljkd12hj3gk',
+    id: null,
+    token: null,
 }
 
 export const userSlice = createSlice({

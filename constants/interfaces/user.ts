@@ -1,10 +1,10 @@
 export interface User {
     name: string;
     email: string;
-    likes: string;
-    recipes: string;
-    tips: string;
-    image: string;
-    id: string;
-    token: string;
+    likes: number;
+    recipes: number;
+    tips: number;
+    image?: string;
+    id: string | null;
+    token?: string | null;
 }
