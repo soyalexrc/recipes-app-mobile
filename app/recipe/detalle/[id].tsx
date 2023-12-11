@@ -14,7 +14,6 @@ import Animated, {FadeIn, FadeOut} from "react-native-reanimated";
 import {useEffect, useState} from "react";
 import {getRecipeById} from "../../../utils/db";
 import {setRecipeForm} from "../../../store/slices/recipe/recipeFormSlice";
-import sleep from "../../../utils/sleep";
 import {selectI18n} from "../../../store/slices/i18n/i18nSlice";
 import {getDictionary} from "../../../i18n";
 
@@ -117,7 +116,6 @@ export default function RecipeViewScreen() {
         }
         const isLocalRecipe = JSON.parse(params.local);
 
-        await sleep(1000);
 
 
         if (isLocalRecipe) {

@@ -1,4 +1,4 @@
-import {RefreshControl, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Platform, RefreshControl, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Button, YStack, Text, ScrollView, XStack, Image, H4} from "tamagui";
 import {Ionicons} from '@expo/vector-icons';
 import {GenericPreviewList} from "../../components/recipes";
@@ -71,7 +71,14 @@ export default function MyRecipesScreen() {
                                     end={{ x: 1, y: 0.5 }}
                                     style={styles.gradient}
                                 >
-                                    <H4 color='#fff'>{textShortener(item.title, 44)}</H4>
+                                    <H4 color='#fff'>
+                                        {
+                                            textShortener(
+                                                item.title,
+                                                Platform.OS === 'android' ? 34 : 44
+                                            )
+                                        }
+                                    </H4>
                                 </LinearGradient>
                                 <Image
                                     source={{uri: item.image,}}
