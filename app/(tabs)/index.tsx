@@ -1,5 +1,5 @@
 import {RefreshControl, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Button, YStack, Text, ScrollView, XStack, Image} from "tamagui";
+import {Button, YStack, Text, ScrollView, XStack, Image, H4} from "tamagui";
 import {Ionicons} from '@expo/vector-icons';
 import {GenericPreviewList} from "../../components/recipes";
 import {useFocusEffect, useRouter} from "expo-router";
@@ -9,34 +9,12 @@ import {getDictionary} from "../../i18n";
 import {selectNavigation, updateCurrent, updatePrev} from "../../store/slices/navigation/navigationSlice";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useEffect, useState} from "react";
-import * as SQLite from 'expo-sqlite';
-import {dropDatabase, getAllRecipes, openDatabase} from "../../utils/db";
+import {dropDatabase, getAllRecipes} from "../../utils/db";
 import {FlashList} from "@shopify/flash-list";
-import {FullRecipe} from "../../constants/interfaces/recipe";
-import {selectNetwork} from "../../store/slices/network/networkSlice";
 import {selectLocalRecipes, setDataToList} from "../../store/slices/recipe/localRecipesSlice";
-import {Simulate} from "react-dom/test-utils";
-import drop = Simulate.drop;
+import { LinearGradient } from 'expo-linear-gradient';
+import textShortener from "../../utils/textShortener";
 
-const sampleData = [
-    {
-        id: '1',
-        title: 'Sample title',
-    },
-    {
-        id: '2',
-        title: 'Sample title 2',
-    },
-    {
-        id: '3',
-        title: 'Sample title 3',
-    },
-    {
-        id: '4',
-        title: 'Sample title 4',
-    },
-
-]
 
 export default function MyRecipesScreen() {
     const router = useRouter();
@@ -84,15 +62,24 @@ export default function MyRecipesScreen() {
                             onPress={() => router.push(`/recipe/detalle/${item.id}?local=true`)}
                             style={{width: '100%'}}
                             key={item.id}>
-                            <YStack paddingRight={index % 2 === 0 && 5} paddingLeft={index % 2 !== 0 && 5}
+                            <YStack position='relative' paddingRight={index % 2 === 0 && 5} paddingLeft={index % 2 !== 0 && 5}
                                     width={'100%'}>
+                                <LinearGradient
+                                    // Background Linear Gradient
+                                    colors={['rgba(0,0,0,0.9)', 'transparent']}
+                                    start={{ x: 1, y: 1 }}
+                                    end={{ x: 1, y: 0.5 }}
+                                    style={styles.gradient}
+                                >
+                                    <H4 color='#fff'>{textShortener(item.title, 44)}</H4>
+                                </LinearGradient>
                                 <Image
                                     source={{uri: item.image,}}
                                     width='100%'
                                     height={280}
                                     style={{borderRadius: 10}}
                                 />
-                                <Text>{item.title}</Text>
+
                             </YStack>
                         </TouchableOpacity>
                     )}
@@ -113,5 +100,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 20,
         right: 20
+    },
+    gradient: {
+        position: 'absolute',
+        flex: 1,
+        justifyContent: 'flex-end',
+        padding: 10,
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 11,
+        borderRadius: 10
     }
 });
