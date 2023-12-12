@@ -3,13 +3,13 @@ import {RootState} from "../../index";
 import {User} from "../../../constants/interfaces/user";
 
 const initialState: User = {
-    name: '',
-    email: '',
-    likes: 0,
-    recipes: 0,
-    tips: 0,
+    name: 'Pepito Perez',
+    email: 'pepitoperez@gmail.com',
+    likes: 10,
+    recipes: 11,
+    tips: 10,
     image: '',
-    id: null,
+    id: '2',
     token: null,
 }
 

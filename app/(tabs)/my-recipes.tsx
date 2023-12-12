@@ -41,6 +41,7 @@ export default function MyRecipesScreen() {
         // await dropDatabase('recipesApp.db');
         setLoading(true);
         const data = await getAllRecipes();
+        console.log(data);
         dispatch(setDataToList(data));
         setLoading(false);
     }

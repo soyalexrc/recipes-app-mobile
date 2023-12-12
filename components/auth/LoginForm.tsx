@@ -1,22 +1,79 @@
-import {Button, Input, Text, XStack, YStack} from "tamagui";
+import {Button, Input, Spinner, Text, XStack, YStack} from "tamagui";
 import {Ionicons, MaterialIcons} from "@expo/vector-icons";
 import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {Controller, useForm} from "react-hook-form";
+import * as React from "react";
+import {useState} from "react";
+import sleep from "../../utils/sleep";
+import Animated, {FadeIn, FadeOut, SlideInLeft, SlideOutRight} from 'react-native-reanimated';
 
 interface Props {
     changeFormType: () => void
 }
 
 export function LoginForm({changeFormType}: Props) {
+    const [submitting, setSubmitting] = useState<boolean>(false);
+
+    const {
+        register,
+        setValue,
+        control,
+        handleSubmit,
+        getValues,
+        reset,
+        formState: {errors},
+    } = useForm<any>({
+        defaultValues: {}
+    })
+
+    const onSubmit = handleSubmit(async (data) => {
+        setSubmitting(true)
+        await sleep(1000);
+        setSubmitting(false)
+        console.log(data);
+    });
+
     return (
-        <YStack>
+        <Animated.View entering={SlideInLeft.delay(100)} exiting={SlideOutRight}>
             <YStack padding={30} gap={20}>
                 <XStack alignItems='center' gap={10}>
                     <MaterialIcons name="alternate-email" size={24} color="black"/>
-                    <Input flex={1} size="$4" placeholder='email' keyboardType='email-address' borderWidth={0}/>
+                    <Controller
+                        control={control}
+                        rules={{required: true}}
+                        render={({field: {onChange, onBlur, value}}) => (
+                            <Input
+                                id='login-email'
+                                size="$4"
+                                placeholder='email'
+                                keyboardType='email-address'
+                                borderWidth={0}
+                                flex={1}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}/>
+                        )}
+                        name='email'
+                    />
                 </XStack>
                 <XStack alignItems='center' gap={10}>
                     <Ionicons name="lock-closed" size={24} color="black"/>
-                    <Input flex={1} size="$4" placeholder='password' borderWidth={0}/>
+                    <Controller
+                        control={control}
+                        rules={{required: true}}
+                        render={({field: {onChange, onBlur, value}}) => (
+                            <Input
+                                id='login-password'
+                                size="$4"
+                                placeholder='password'
+                                borderWidth={0}
+                                flex={1}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}/>
+                        )}
+                        name='password'
+                    />
                 </XStack>
             </YStack>
 
@@ -26,7 +83,10 @@ export function LoginForm({changeFormType}: Props) {
                         <Text color='blue' paddingVertical={15} textAlign='center'>Forgot password?</Text>
                     </TouchableOpacity>
                 </XStack>
-                <Button backgroundColor='lightblue'>Log in</Button>
+                <Button backgroundColor='lightblue' onPress={onSubmit}>
+                    {submitting && <Spinner size="large" color="#fff" />}
+                    {submitting ? 'Logging in' :  'Log in'}
+                </Button>
                 <XStack justifyContent='center'>
                     <Text paddingVertical={15} textAlign='center'>Not a member? </Text>
                     <TouchableOpacity onPress={changeFormType}>
@@ -44,7 +104,7 @@ export function LoginForm({changeFormType}: Props) {
                     Ingresar con google
                 </Button>
             </XStack>
-        </YStack>
+        </Animated.View>
     )
 }
 

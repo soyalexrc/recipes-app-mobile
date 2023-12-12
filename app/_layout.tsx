@@ -26,7 +26,7 @@ export {
 
 export const unstable_settings = {
     // Ensure that reloading on `/modal` keeps a back button present.
-    initialRouteName: '(tabs)',
+    initialRouteName: '(tabs)/index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -88,6 +88,7 @@ function RootLayoutNav() {
                         <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                         <Stack.Screen name="(auth)" options={{headerShown: false}}/>
                         <Stack.Screen name="recipe" options={{headerShown: false}}/>
+                        <Stack.Screen name="settings" options={{headerShown: false, presentation: 'modal'}}/>
                     </Stack>
                 </SafeAreaProvider>
             </TamaguiProvider>

@@ -6,6 +6,7 @@ import {useRouter} from "expo-router";
 interface Props {
     children?: React.ReactNode;
     title?: string;
+    hideGoBackButton?: boolean;
 }
 
 export function BasicCustomHeader(props: Props) {
@@ -13,7 +14,7 @@ export function BasicCustomHeader(props: Props) {
     return (
         <XStack padding={10} justifyContent='space-between' alignItems='center'>
             <TouchableOpacity onPress={() => router.back()}>
-                <Ionicons name="arrow-back" size={24} color="black"/>
+                {!props.hideGoBackButton &&  <Ionicons name="arrow-back" size={24} color="black"/>}
             </TouchableOpacity>
             <H4 alignSelf='center'>{props.title}</H4>
             {
