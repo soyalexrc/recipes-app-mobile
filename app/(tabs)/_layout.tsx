@@ -38,20 +38,7 @@ export default function TabLayout() {
                 options={{
                     title: getDictionary(lng).discovery.pageTitle,
                     tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
-                    headerRight: () => (
-                        <Link href="/recipe/(search)/global" asChild>
-                            <Pressable>
-                                {({pressed}) => (
-                                    <FontAwesome
-                                        name="search"
-                                        size={25}
-                                        color={Colors[colorScheme ?? 'light'].text}
-                                        style={{marginRight: 15, opacity: pressed ? 0.5 : 1}}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>
-                    ),
+                    headerShown: false,
                 }}
             />
             <Tabs.Screen

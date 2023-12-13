@@ -4,3 +4,4 @@ export * from './RecipeForm';
 export * from './RecipeIngredients';
 export * from './RecipeSteps';
 export * from './HeaderSearch';
+export * from './CommunityHorizontalList';

@@ -116,8 +116,6 @@ export default function RecipeViewScreen() {
         }
         const isLocalRecipe = JSON.parse(params.local);
 
-
-
         if (isLocalRecipe) {
             const recipe = await getRecipeById(id);
             if (recipe) {
@@ -237,7 +235,7 @@ export default function RecipeViewScreen() {
                             <YStack padding={10}>
                                 <H4>{getDictionary(lng).recipeDetail.ingredientsFor}</H4>
                                 <Paragraph
-                                    fontSize={16}>{currentRecipe.amountOfPortions} {`${currentRecipe.typeOfPortion}${Number(currentRecipe.amountOfPortions) > 1 && 's'}`}</Paragraph>
+                                    fontSize={16}>{currentRecipe.amountOfPortions} {`${currentRecipe.typeOfPortion}${Number(currentRecipe.amountOfPortions) > 1 ? 's' : ''}`}</Paragraph>
 
                                 <YStack marginVertical={20}>
                                     {
