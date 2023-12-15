@@ -75,10 +75,14 @@ export const recipeFormSlice = createSlice({
                 userId,
                 id,
                 typeOfPortion,
-                category
+                category,
+                _id,
+                localId,
             } = action.payload;
 
             state.ingredients = ingredients;
+            state.localId = localId;
+            state._id = _id;
             state.amountOfPortions = amountOfPortions;
             state.description = description;
             state.title = title;

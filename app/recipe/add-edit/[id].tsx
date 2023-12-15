@@ -20,6 +20,7 @@ import {createRecipe, deleteRecipeById, updateRecipe} from "../../../utils/db";
 import {nanoid} from "@reduxjs/toolkit";
 import {addOneRecipe, deleteLocalRecipeById, editLocalRecipe} from "../../../store/slices/recipe/localRecipesSlice";
 import {BasicCustomHeader} from "../../../components/BasicCustomHeader";
+import {selectUser} from "../../../store/slices/user/userSlice";
 
 
 export interface AddRecipeFormData {
@@ -34,6 +35,7 @@ export interface AddRecipeFormData {
 export default function AddEditRecipeScreen() {
     const recipeForm = useAppSelector(selectRecipeForm);
     const lng = useAppSelector(selectI18n).language;
+    const user = useAppSelector(selectUser);
     const router = useRouter();
     const insets = useSafeAreaInsets();
 
@@ -65,7 +67,7 @@ export default function AddEditRecipeScreen() {
                     ingredients: recipeForm.ingredients,
                     image: recipeForm.image,
                 }
-                const newId = await createRecipe(newRecipe);
+                const newId = await createRecipe(newRecipe, user.id);
 
                 dispatch(addOneRecipe({
                     ...newRecipe,
@@ -143,7 +145,7 @@ export default function AddEditRecipeScreen() {
     useEffect(() => {
         setTimeout(() => {
             setLoading(false);
-        }, 500)
+        }, 10)
     }, []);
 
     return (

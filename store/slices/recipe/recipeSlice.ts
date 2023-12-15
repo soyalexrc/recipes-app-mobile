@@ -62,6 +62,8 @@ export const recipeSlice = createSlice({
         setRecipe: (state, action: PayloadAction<FullRecipe>) => {
             const {
                 amountOfPortions,
+                _id,
+                localId,
                 title,
                 estimatedTime,
                 ingredients,
@@ -76,6 +78,8 @@ export const recipeSlice = createSlice({
 
             state.ingredients = ingredients;
             state.amountOfPortions = amountOfPortions;
+            state.localId = localId;
+            state._id = _id;
             state.description = description;
             state.title = title;
             state.estimatedTime = estimatedTime;

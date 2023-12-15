@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import textShortener from "../../utils/textShortener";
 import {selectUser} from "../../store/slices/user/userSlice";
 import {NotAuthenticatedScreen} from "../../components/shared";
+import LottieView from "lottie-react-native";
 
 
 export default function MyRecipesScreen() {
@@ -38,9 +39,10 @@ export default function MyRecipesScreen() {
     }, []);
 
     async function checkDatabase() {
+        if (!user.id) return;
         // await dropDatabase('recipesApp.db');
         setLoading(true);
-        const data = await getAllRecipes();
+        const data = await getAllRecipes(user.id);
         console.log(data);
         dispatch(setDataToList(data));
         setLoading(false);
@@ -53,6 +55,14 @@ export default function MyRecipesScreen() {
 
     return (
         <YStack flex={1} paddingTop={insets.top} backgroundColor='#fff' position='relative'>
+            {
+                localRecipes.length < 1 &&
+                <YStack height='100%' justifyContent='center' alignItems='center'>
+                    <LottieView  autoSize autoPlay loop source={require('../../utils/animations/empty-list.json')}/>
+                    <Text fontSize={20}>Ingresa una receta!</Text>
+                </YStack>
+            }
+
             <YStack p={10} height='100%'>
                 <FlashList
                     data={localRecipes}
@@ -67,7 +77,7 @@ export default function MyRecipesScreen() {
                     ItemSeparatorComponent={() => <View style={{height: 10}}/>}
                     renderItem={({item, index}) => (
                         <TouchableOpacity
-                            onPress={() => router.push(`/recipe/detalle/${item.id}?local=true`)}
+                            onPress={() => router.push(`/recipe/detalle/${item.localId}?local=true`)}
                             style={{width: '100%'}}
                             key={item.id}>
                             <YStack position='relative' paddingRight={index % 2 === 0 && 5} paddingLeft={index % 2 !== 0 && 5}

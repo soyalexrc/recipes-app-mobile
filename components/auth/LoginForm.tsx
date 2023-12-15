@@ -6,6 +6,11 @@ import * as React from "react";
 import {useState} from "react";
 import sleep from "../../utils/sleep";
 import Animated, {FadeIn, FadeOut, SlideInLeft, SlideOutRight} from 'react-native-reanimated';
+import api from "../../utils/api/api";
+import {useAppDispatch} from "../../store/hooks";
+import {setUser} from "../../store/slices/user/userSlice";
+import {useRouter} from "expo-router";
+import * as storage from '../../utils/storage';
 
 interface Props {
     changeFormType: () => void
@@ -13,7 +18,8 @@ interface Props {
 
 export function LoginForm({changeFormType}: Props) {
     const [submitting, setSubmitting] = useState<boolean>(false);
-
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     const {
         register,
         setValue,
@@ -26,11 +32,19 @@ export function LoginForm({changeFormType}: Props) {
         defaultValues: {}
     })
 
-    const onSubmit = handleSubmit(async (data) => {
+    const onSubmit = handleSubmit(async (loginData) => {
         setSubmitting(true)
-        await sleep(1000);
+        try {
+            const {data} = await api.post('auth/login', loginData);
+            const savedOnStorage = await storage.save('userData', data.data);
+            if (savedOnStorage) {
+                dispatch(setUser(data.data));
+                router.replace('/(tabs)')
+            }
+        } catch (error) {
+            console.log(error)
+        }
         setSubmitting(false)
-        console.log(data);
     });
 
     return (

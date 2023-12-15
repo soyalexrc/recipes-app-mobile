@@ -2,7 +2,7 @@ import {RefreshControl, TouchableOpacity, View} from "react-native";
 import {Stack} from "expo-router/stack";
 import {Button, H2, H4, Image, Paragraph, ScrollView, Text, XStack, YStack} from "tamagui";
 import { useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
-import {AntDesign, Ionicons} from "@expo/vector-icons";
+import {AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons";
 import * as React from "react";
 import { useSafeAreaInsets} from "react-native-safe-area-context";
 import {FullRecipe, Step, Ingredient} from "../../../constants/interfaces/recipe";
@@ -117,7 +117,7 @@ export default function RecipeViewScreen() {
         const isLocalRecipe = JSON.parse(params.local);
 
         if (isLocalRecipe) {
-            const recipe = await getRecipeById(id);
+            const recipe = await getRecipeById(id, user.id!);
             if (recipe) {
                 dispatch(setRecipe(recipe));
                 navigation.setOptions({
@@ -161,7 +161,7 @@ export default function RecipeViewScreen() {
                 </YStack>
             }
             {
-                !loading && currentRecipe.id &&
+                !loading && (currentRecipe.localId || currentRecipe._id) &&
                 <>
                     <XStack padding={15} justifyContent='space-between' alignItems='center'>
                         <TouchableOpacity onPress={() => router.back()}>
@@ -169,6 +169,9 @@ export default function RecipeViewScreen() {
                         </TouchableOpacity>
                         {/*<H4 alignSelf='center'>Pan de jamon venezolano </H4>*/}
                         <XStack gap={20}>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name={currentRecipe._id ? 'publish-off' : 'publish'} size={24} color="black" />
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => share('https://google.com')}>
                                 <Ionicons name="share-social" size={24} color="black"/>
                             </TouchableOpacity>
@@ -321,30 +324,5 @@ export default function RecipeViewScreen() {
 
             }
         </View>
-    )
-}
-
-function HeaderRight(props: { isOwner: boolean }) {
-    const router = useRouter();
-    const {share} = useShare();
-
-    return (
-        <XStack gap={20}>
-            <TouchableOpacity onPress={() => share('https://google.com')}>
-                <Ionicons name="share-social" size={24} color="black"/>
-            </TouchableOpacity>
-            {
-                props.isOwner &&
-                <TouchableOpacity onPress={() => router.push('/recipe/add-edit/2')}>
-                    <Ionicons name="pencil" size={24} color="black"/>
-                </TouchableOpacity>
-            }
-            {
-                !props.isOwner &&
-                <TouchableOpacity>
-                    <Ionicons name="heart-outline" size={24} color="black"/>
-                </TouchableOpacity>
-            }
-        </XStack>
     )
 }

@@ -12,8 +12,8 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
         tx.executeSql(`
             CREATE TABLE IF NOT EXISTS recipes
             (
-                id               INTEGER PRIMARY KEY AUTOINCREMENT ,
-                localId          TEXT,
+                localId          INTEGER PRIMARY KEY AUTOINCREMENT ,
+                _id              TEXT,
                 userId           TEXT,
                 title            TEXT,
                 category         TEXT,
@@ -30,14 +30,15 @@ export async function openDatabase(pathToDatabaseFile: string): Promise<SQLite.D
     return db
 }
 
-export async function createRecipe(recipe: FullRecipe): Promise<number | undefined> {
+export async function createRecipe(recipe: FullRecipe, userId: string): Promise<number | undefined> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
         return new Promise<number | undefined>((resolve, reject) => {
             db.transaction(tx => {
                 tx.executeSql(
-                    'INSERT INTO recipes (userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                    'INSERT INTO recipes (_id, userId, title, category, description, estimatedTime, typeOfPortion, amountOfPortions, image, steps, ingredients) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
                     [
+                        '',
                         recipe.userId!,
                         recipe.title,
                         recipe.category,
@@ -66,9 +67,9 @@ export async function createRecipe(recipe: FullRecipe): Promise<number | undefin
     }
 }
 
-export async function getAllRecipes(): Promise<FullRecipe[]> {
+export async function getAllRecipes(userId: string): Promise<FullRecipe[]> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
         return new Promise<FullRecipe[]>((resolve, reject) => {
             db.transaction(
                 tx => {
@@ -98,9 +99,9 @@ export async function getAllRecipes(): Promise<FullRecipe[]> {
     }
 }
 
-export async function getRecipesPaginated(pageNumber: number, pageSize: number): Promise<FullRecipe[]> {
+export async function getRecipesPaginated(pageNumber: number, pageSize: number, userId: string): Promise<FullRecipe[]> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
         const offset = (pageNumber - 1) * pageSize;
 
         return new Promise<FullRecipe[]>((resolve, reject) => {
@@ -149,9 +150,9 @@ export async function dropDatabase(databaseName: string): Promise<void> {
     }
 }
 
-export async function updateRecipe(recipeId: string, updatedData: FullRecipe): Promise<void> {
+export async function updateRecipe(recipeId: string, updatedData: FullRecipe, userId: string): Promise<void> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
 
 
         return new Promise<void>((resolve, reject) => {
@@ -196,15 +197,15 @@ export async function updateRecipe(recipeId: string, updatedData: FullRecipe): P
     }
 }
 
-export async function getRecipeById(recipeId: string): Promise<FullRecipe | null> {
+export async function getRecipeById(recipeId: string, userId: string): Promise<FullRecipe | null> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
 
         return new Promise<FullRecipe | null>((resolve, reject) => {
             db.transaction(
                 tx => {
                     tx.executeSql(
-                        'SELECT * FROM recipes WHERE id = ?;',
+                        'SELECT * FROM recipes WHERE localId = ?;',
                         [recipeId],
                         (_, { rows }) => {
                             const result: FullRecipe[] = rows._array;
@@ -238,9 +239,9 @@ export async function getRecipeById(recipeId: string): Promise<FullRecipe | null
     }
 }
 
-export async function deleteRecipeById(recipeId: string | number): Promise<boolean> {
+export async function deleteRecipeById(recipeId: string | number, userId: string): Promise<boolean> {
     try {
-        const db = await openDatabase('recipesApp.db');
+        const db = await openDatabase(`recipesApp-${userId}.db`);
 
         return new Promise<boolean>((resolve, reject) => {
             db.transaction(
